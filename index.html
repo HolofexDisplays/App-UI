@@ -1,0 +1,398 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+  <meta name="theme-color" content="#000000" />
+  <title>Holofex Studio — AI Holo Lab</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Exo+2:wght@300;400;500;600;700;800&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <div class="phone">
+    <div class="phone-notch"></div>
+
+    <!-- ============ SPLASH ============ -->
+    <section class="screen screen-splash active" id="screen-splash">
+      <div class="splash-inner">
+        <div class="holo-mark holo-mark-lg">
+          <span class="hex hex-1"></span>
+          <span class="hex hex-2"></span>
+          <span class="hex hex-3"></span>
+        </div>
+        <h1 class="splash-word">H O L O F E X</h1>
+        <p class="splash-sub">H O L O G R A P H I C&nbsp;&nbsp;D I S P L A Y</p>
+        <p class="splash-tag">Bringing content to life<br/>in stunning <span class="grad-text">3D</span></p>
+        <div class="splash-bar"><span></span></div>
+      </div>
+    </section>
+
+    <!-- ============ HOME ============ -->
+    <section class="screen screen-home" id="screen-home">
+      <header class="app-header">
+        <div class="brand-row">
+          <div class="holo-mark holo-mark-sm">
+            <span class="hex hex-1"></span>
+            <span class="hex hex-2"></span>
+            <span class="hex hex-3"></span>
+          </div>
+          <div class="brand-name">HOLOFEX<small>AI HOLO LAB</small></div>
+        </div>
+        <button class="credits-chip" data-go="screen-profile">
+          <span class="credit-dot"></span> 240 <small>credits</small>
+        </button>
+      </header>
+
+      <div class="scroll">
+        <div class="hero-card">
+          <div class="hero-glow"></div>
+          <p class="hero-kicker">IDEA → HOLOGRAM IN MINUTES</p>
+          <h2>Create your<br/><span class="grad-text">hologram</span></h2>
+          <p class="hero-sub">AI-generated 3D animations, optimised for real holographic fan displays. No design skills needed.</p>
+          <button class="btn-gradient" data-go="screen-create">✦ &nbsp;Start creating</button>
+        </div>
+
+        <p class="section-label">GENERATOR MODES</p>
+
+        <button class="mode-card" data-go="screen-create" data-mode="logo">
+          <div class="mode-icon mode-icon-cyan">⬡</div>
+          <div class="mode-copy">
+            <h3>Logo to Hologram</h3>
+            <p>Turn any brand logo into a looping 3D hologram animation</p>
+          </div>
+          <span class="mode-arrow">›</span>
+        </button>
+
+        <button class="mode-card" data-go="screen-create" data-mode="product">
+          <div class="mode-icon mode-icon-magenta">◈</div>
+          <div class="mode-copy">
+            <h3>AI Product Studio</h3>
+            <p>Photorealistic 3D product visuals, exported hologram-ready</p>
+          </div>
+          <span class="mode-arrow">›</span>
+        </button>
+
+        <button class="mode-card" data-go="screen-create" data-mode="text">
+          <div class="mode-icon mode-icon-orange">✺</div>
+          <div class="mode-copy">
+            <h3>Text to 3D Scene</h3>
+            <p>Describe any scene — AI builds a full 3D model for your fan</p>
+          </div>
+          <span class="mode-arrow">›</span>
+        </button>
+
+        <div class="section-row">
+          <p class="section-label">RECENT CREATIONS</p>
+          <button class="link-btn" data-go="screen-library">View all</button>
+        </div>
+
+        <div class="recent-row">
+          <button class="recent-item" data-go="screen-preview">
+            <div class="thumb thumb-a"><span class="thumb-obj"></span></div>
+            <p>Neon Orbit Logo</p>
+          </button>
+          <button class="recent-item" data-go="screen-preview">
+            <div class="thumb thumb-b"><span class="thumb-obj"></span></div>
+            <p>Sneaker Spin 360</p>
+          </button>
+          <button class="recent-item" data-go="screen-preview">
+            <div class="thumb thumb-c"><span class="thumb-obj"></span></div>
+            <p>Plasma Jellyfish</p>
+          </button>
+        </div>
+
+        <div class="device-banner" data-go="screen-devices">
+          <div class="device-banner-icon"><span class="pulse-ring"></span>◉</div>
+          <div>
+            <h4>Holofex X1 connected</h4>
+            <p>65cm fan · Wi-Fi · Ready to play</p>
+          </div>
+          <span class="status-pill">LIVE</span>
+        </div>
+        <div class="scroll-spacer"></div>
+      </div>
+    </section>
+
+    <!-- ============ CREATE ============ -->
+    <section class="screen screen-create" id="screen-create">
+      <header class="app-header">
+        <button class="icon-btn" data-go="screen-home">‹</button>
+        <h2 class="header-title">Create</h2>
+        <button class="credits-chip" data-go="screen-profile"><span class="credit-dot"></span> 240</button>
+      </header>
+
+      <div class="scroll">
+        <div class="seg-tabs" id="mode-tabs">
+          <button class="seg-tab active" data-tab="logo">⬡ Logo</button>
+          <button class="seg-tab" data-tab="product">◈ Product</button>
+          <button class="seg-tab" data-tab="text">✺ Scene</button>
+        </div>
+
+        <div class="tab-pane active" data-pane="logo">
+          <button class="upload-zone">
+            <div class="upload-ring">⬆</div>
+            <h4>Upload your logo</h4>
+            <p>PNG or SVG · transparent background works best</p>
+          </button>
+        </div>
+
+        <div class="tab-pane" data-pane="product">
+          <button class="upload-zone">
+            <div class="upload-ring">⬆</div>
+            <h4>Upload product photos</h4>
+            <p>1–4 angles · we'll rebuild it in 3D</p>
+          </button>
+        </div>
+
+        <div class="tab-pane" data-pane="text"></div>
+
+        <p class="field-label">PROMPT</p>
+        <div class="prompt-box">
+          <textarea id="prompt-input" rows="3" placeholder="Describe your hologram… e.g. “chrome wireframe cube slowly rotating, neon cyan and magenta light trails”"></textarea>
+          <button class="magic-btn" title="Enhance prompt">✦ Enhance</button>
+        </div>
+
+        <p class="field-label">STYLE</p>
+        <div class="chip-row">
+          <button class="chip active">Neon Wireframe</button>
+          <button class="chip">Photoreal</button>
+          <button class="chip">Particle Flow</button>
+          <button class="chip">Liquid Chrome</button>
+          <button class="chip">Plasma</button>
+          <button class="chip">Glass</button>
+        </div>
+
+        <p class="field-label">OUTPUT</p>
+        <div class="setting-card">
+          <div class="setting-row">
+            <span>Display</span>
+            <button class="setting-value">Holofex X1 · 65cm ▾</button>
+          </div>
+          <div class="setting-row">
+            <span>Resolution</span>
+            <button class="setting-value">1024 × 1024 ▾</button>
+          </div>
+          <div class="setting-row">
+            <span>Loop length</span>
+            <button class="setting-value">6 seconds ▾</button>
+          </div>
+          <div class="setting-row">
+            <span>Seamless loop</span>
+            <button class="toggle on" aria-pressed="true"><span></span></button>
+          </div>
+          <div class="setting-row">
+            <span>Auto colour-grade for fan</span>
+            <button class="toggle on" aria-pressed="true"><span></span></button>
+          </div>
+        </div>
+
+        <button class="btn-gradient btn-generate" id="btn-generate">✦ &nbsp;Generate hologram &nbsp;·&nbsp; 12 credits</button>
+        <div class="scroll-spacer"></div>
+      </div>
+    </section>
+
+    <!-- ============ GENERATING ============ -->
+    <section class="screen screen-generating" id="screen-generating">
+      <div class="gen-center">
+        <div class="gen-orb">
+          <span class="orb-ring r1"></span>
+          <span class="orb-ring r2"></span>
+          <span class="orb-ring r3"></span>
+          <span class="orb-core"></span>
+        </div>
+        <h2 class="gen-title">Generating<span class="dots"><i>.</i><i>.</i><i>.</i></span></h2>
+        <p class="gen-status" id="gen-status">Dreaming up your 3D model…</p>
+        <div class="gen-bar"><span id="gen-bar-fill"></span></div>
+        <p class="gen-pct" id="gen-pct">0%</p>
+        <button class="link-btn" data-go="screen-create">Cancel</button>
+      </div>
+    </section>
+
+    <!-- ============ PREVIEW ============ -->
+    <section class="screen screen-preview" id="screen-preview">
+      <header class="app-header">
+        <button class="icon-btn" data-go="screen-home">‹</button>
+        <h2 class="header-title">Preview</h2>
+        <button class="icon-btn">⋯</button>
+      </header>
+
+      <div class="scroll">
+        <div class="fan-sim">
+          <div class="fan-circle">
+            <span class="fan-blade"></span>
+            <span class="fan-glow"></span>
+            <div class="fan-content">
+              <div class="holo-mark holo-mark-md spin-slow">
+                <span class="hex hex-1"></span>
+                <span class="hex hex-2"></span>
+                <span class="hex hex-3"></span>
+              </div>
+            </div>
+            <span class="fan-hub"></span>
+          </div>
+          <p class="fan-caption">Simulated on Holofex X1 · 65cm fan</p>
+        </div>
+
+        <div class="meta-strip">
+          <div class="meta-cell"><small>RESOLUTION</small>1024²</div>
+          <div class="meta-cell"><small>FRAME RATE</small>30 fps</div>
+          <div class="meta-cell"><small>LOOP</small>6.0 s</div>
+          <div class="meta-cell"><small>FORMAT</small>MP4</div>
+        </div>
+
+        <button class="btn-gradient">▶ &nbsp;Send to display</button>
+        <div class="action-row">
+          <button class="btn-ghost">⬇ Export MP4</button>
+          <button class="btn-ghost">♡ Save</button>
+          <button class="btn-ghost" data-go="screen-create">↻ Remix</button>
+        </div>
+        <div class="scroll-spacer"></div>
+      </div>
+    </section>
+
+    <!-- ============ LIBRARY ============ -->
+    <section class="screen screen-library" id="screen-library">
+      <header class="app-header">
+        <h2 class="header-title-left">Library</h2>
+        <button class="icon-btn">⌕</button>
+      </header>
+
+      <div class="scroll">
+        <div class="chip-row">
+          <button class="chip active">All</button>
+          <button class="chip">Logos</button>
+          <button class="chip">Products</button>
+          <button class="chip">Scenes</button>
+          <button class="chip">Favourites</button>
+        </div>
+
+        <div class="lib-grid">
+          <button class="lib-item" data-go="screen-preview">
+            <div class="thumb thumb-a"><span class="thumb-obj"></span></div>
+            <p>Neon Orbit Logo</p><small>Logo · 6s loop</small>
+          </button>
+          <button class="lib-item" data-go="screen-preview">
+            <div class="thumb thumb-b"><span class="thumb-obj"></span></div>
+            <p>Sneaker Spin 360</p><small>Product · 8s loop</small>
+          </button>
+          <button class="lib-item" data-go="screen-preview">
+            <div class="thumb thumb-c"><span class="thumb-obj"></span></div>
+            <p>Plasma Jellyfish</p><small>Scene · 10s loop</small>
+          </button>
+          <button class="lib-item" data-go="screen-preview">
+            <div class="thumb thumb-d"><span class="thumb-obj"></span></div>
+            <p>Chrome Hex Cube</p><small>Logo · 6s loop</small>
+          </button>
+          <button class="lib-item" data-go="screen-preview">
+            <div class="thumb thumb-e"><span class="thumb-obj"></span></div>
+            <p>Galaxy Swirl</p><small>Scene · 12s loop</small>
+          </button>
+          <button class="lib-item" data-go="screen-preview">
+            <div class="thumb thumb-f"><span class="thumb-obj"></span></div>
+            <p>Watch Reveal</p><small>Product · 7s loop</small>
+          </button>
+        </div>
+        <div class="scroll-spacer"></div>
+      </div>
+    </section>
+
+    <!-- ============ DEVICES ============ -->
+    <section class="screen screen-devices" id="screen-devices">
+      <header class="app-header">
+        <h2 class="header-title-left">Displays</h2>
+        <button class="icon-btn">＋</button>
+      </header>
+
+      <div class="scroll">
+        <div class="device-card online">
+          <div class="device-vis"><span class="pulse-ring"></span><span class="device-fan"></span></div>
+          <div class="device-info">
+            <h3>Holofex X1</h3>
+            <p>65cm · Single fan · Wi-Fi</p>
+            <div class="device-tags"><span class="status-pill">ONLINE</span><span class="tag">Playing: Neon Orbit</span></div>
+          </div>
+        </div>
+
+        <div class="device-card">
+          <div class="device-vis dim"><span class="device-fan"></span></div>
+          <div class="device-info">
+            <h3>Holofex Wall Pro</h3>
+            <p>2×2 multi-fan array · 1.3m</p>
+            <div class="device-tags"><span class="status-pill off">OFFLINE</span></div>
+          </div>
+        </div>
+
+        <button class="add-device" >
+          <span>＋</span> Pair a new display
+        </button>
+
+        <p class="section-label">QUICK CONTROLS</p>
+        <div class="setting-card">
+          <div class="setting-row"><span>Brightness</span><div class="slider"><span style="width:72%"></span></div></div>
+          <div class="setting-row"><span>Rotation speed</span><div class="slider"><span style="width:55%"></span></div></div>
+          <div class="setting-row"><span>Schedule playback</span><button class="toggle"><span></span></button></div>
+        </div>
+        <div class="scroll-spacer"></div>
+      </div>
+    </section>
+
+    <!-- ============ PROFILE ============ -->
+    <section class="screen screen-profile" id="screen-profile">
+      <header class="app-header">
+        <h2 class="header-title-left">Profile</h2>
+        <button class="icon-btn">⚙</button>
+      </header>
+
+      <div class="scroll">
+        <div class="profile-head">
+          <div class="avatar">TC</div>
+          <div>
+            <h3>Turhan C.</h3>
+            <p>Creator plan</p>
+          </div>
+        </div>
+
+        <div class="plan-card">
+          <div class="plan-glow"></div>
+          <div class="plan-top">
+            <span class="plan-name">CREATOR</span>
+            <button class="link-btn light">Upgrade</button>
+          </div>
+          <h2 class="plan-credits">240 <small>credits left</small></h2>
+          <div class="gen-bar plan-bar"><span style="width:48%"></span></div>
+          <p class="plan-renew">Renews in 12 days · 500 credits / month</p>
+        </div>
+
+        <p class="section-label">SETTINGS</p>
+        <div class="setting-card">
+          <div class="setting-row"><span>Default display</span><button class="setting-value">Holofex X1 ▾</button></div>
+          <div class="setting-row"><span>Export quality</span><button class="setting-value">High ▾</button></div>
+          <div class="setting-row"><span>Watermark</span><button class="toggle"><span></span></button></div>
+          <div class="setting-row"><span>Notifications</span><button class="toggle on"><span></span></button></div>
+        </div>
+
+        <div class="setting-card">
+          <div class="setting-row link"><span>Help & tutorials</span><span class="mode-arrow">›</span></div>
+          <div class="setting-row link"><span>Holofex hardware shop</span><span class="mode-arrow">›</span></div>
+          <div class="setting-row link"><span>Sign out</span><span class="mode-arrow">›</span></div>
+        </div>
+        <p class="version">Holofex Studio · v0.1.0 UI prototype</p>
+        <div class="scroll-spacer"></div>
+      </div>
+    </section>
+
+    <!-- ============ BOTTOM NAV ============ -->
+    <nav class="bottom-nav" id="bottom-nav">
+      <button class="nav-btn active" data-go="screen-home"><span class="nav-ico">⌂</span>Home</button>
+      <button class="nav-btn" data-go="screen-library"><span class="nav-ico">▦</span>Library</button>
+      <button class="nav-fab" data-go="screen-create"><span>✦</span></button>
+      <button class="nav-btn" data-go="screen-devices"><span class="nav-ico">◉</span>Displays</button>
+      <button class="nav-btn" data-go="screen-profile"><span class="nav-ico">◌</span>Profile</button>
+    </nav>
+  </div>
+
+  <script src="app.js"></script>
+</body>
+</html>
