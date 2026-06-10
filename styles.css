@@ -128,22 +128,11 @@ button { font-family: inherit; color: inherit; background: none; border: 0; curs
   background: var(--grad-hot); box-shadow: 0 0 8px var(--magenta);
 }
 
-/* ---------- holo mark (wireframe hex cube) ---------- */
-.holo-mark { position: relative; display: grid; place-items: center; }
-.holo-mark .hex {
-  position: absolute;
-  width: 100%; height: 100%;
-  clip-path: polygon(50% 0%, 100% 25%, 100% 75%, 50% 100%, 0% 75%, 0% 25%);
-  border-radius: 4px;
-}
-.hex-1 { background: linear-gradient(135deg, var(--cyan), var(--purple)); opacity: 0.9; filter: blur(0.4px); }
-.hex-2 { background: linear-gradient(225deg, var(--magenta), var(--orange)); transform: scale(0.78) rotate(14deg); mix-blend-mode: screen; opacity: 0.85; }
-.hex-3 { background: transparent; border: 1.5px solid rgba(255,255,255,0.65); transform: scale(0.56) rotate(-10deg); clip-path: none; border-radius: 0;
-         clip-path: polygon(50% 0%, 100% 25%, 100% 75%, 50% 100%, 0% 75%, 0% 25%); }
-
-.holo-mark-sm { width: 30px; height: 30px; }
-.holo-mark-md { width: 92px; height: 92px; }
-.holo-mark-lg { width: 130px; height: 130px; filter: drop-shadow(0 0 28px rgba(127, 91, 255, 0.55)); }
+/* ---------- holo mark (wireframe hex ribbon asset) ---------- */
+.logo-img { display: block; user-select: none; -webkit-user-drag: none; }
+.logo-sm { width: 38px; height: 38px; }
+.logo-md { width: 170px; height: 170px; }
+.logo-lg { width: 210px; height: 210px; filter: drop-shadow(0 0 30px rgba(127, 91, 255, 0.45)); }
 
 .spin-slow { animation: spin 9s linear infinite; }
 @keyframes spin { to { transform: rotate(360deg); } }
