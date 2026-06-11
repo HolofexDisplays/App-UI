@@ -65,6 +65,18 @@ body { width: 1920px; height: 1080px; overflow: hidden; font-family: "Exo 2", sa
 }
 @keyframes flashpop { 0% { opacity: 0 } 18% { opacity: 1 } 100% { opacity: 0 } }
 
+/* liquid goo wipes at scene boundaries — blobs swell, merge, swallow the
+   frame at the cut, then melt away over the next scene */
+.lwipe { position: absolute; inset: -80px; z-index: 95; filter: url(#goo); }
+.lwipe span { position: absolute; width: 1150px; height: 1150px; border-radius: 50%;
+  transform: translate(-50%,-50%) scale(0);
+  animation: blobgrow 1.3s cubic-bezier(.45,.05,.55,.95) both; }
+@keyframes blobgrow {
+  0%       { transform: translate(-50%,-50%) scale(0) }
+  40%, 60% { transform: translate(-50%,-50%) scale(1.15) }
+  100%     { transform: translate(-50%,-50%) scale(0) }
+}
+
 /* ---------- shared text styles ---------- */
 .kicker { font-size: 30px; letter-spacing: .55em; color: var(--cyan); font-weight: 600; }
 .h1 { font-size: 132px; font-weight: 800; letter-spacing: .04em; line-height: 1.02; }
@@ -194,8 +206,23 @@ body { width: 1920px; height: 1080px; overflow: hidden; font-family: "Exo 2", sa
 .phone img { display: block; width: 100%; }
 .phone .scr { position: absolute; inset: 0; opacity: 0; }
 .phone .scr img { width: 100%; }
+/* glare sweep across the glass */
+.phone::after { content: ""; position: absolute; inset: -2px; z-index: 9;
+  background: linear-gradient(115deg, transparent 32%, rgba(255,255,255,.22) 46%, rgba(255,255,255,.06) 54%, transparent 64%);
+  transform: translateX(-110%); }
+@keyframes glare { from { transform: translateX(-110%) } to { transform: translateX(110%) } }
+/* idle 3D float (translate/rotate props compose with the entrance transform) */
+@keyframes phonefloat { 0%, 100% { rotate: y 7deg; translate: 0 0 } 50% { rotate: y -7deg; translate: 0 -12px } }
 
-#s5 .phone { right: 250px; top: 110px; animation: rise 1s 30.8s both; }
+#s5 .inner, #s6 .inner, #s7 .inner { perspective: 1700px; }
+#s5 .phone { right: 250px; top: 110px; transform-style: preserve-3d;
+  animation: phonein3d 1.5s 30.8s cubic-bezier(.18,.9,.22,1.04) both, phonefloat 7s 32.3s ease-in-out both; }
+@keyframes phonein3d {
+  0%   { opacity: 0; transform: translateX(760px) rotateY(-150deg) scale(.65) }
+  60%  { opacity: 1; transform: translateX(-26px) rotateY(16deg) scale(1.02) }
+  100% { opacity: 1; transform: none }
+}
+#s5 .phone::after { animation: glare 1.1s 32.2s ease both; }
 #s5 .scr-gen { animation: scrswap 1s 34.6s ease both; }
 @keyframes scrswap { from { opacity: 0 } to { opacity: 1 } }
 
@@ -215,7 +242,13 @@ body { width: 1920px; height: 1080px; overflow: hidden; font-family: "Exo 2", sa
 @keyframes fill { from { width: 0 } to { width: 100% } }
 #s6 .done { margin-top: 22px; font-size: 30px; font-weight: 600; color: var(--teal); letter-spacing: .04em;
   animation: rise .6s 44.1s both; }
-#s6 .phone { right: 250px; top: 110px; animation: rise 1s 39.7s both; }
+#s6 .phone { right: 250px; top: 110px; transform-style: preserve-3d;
+  animation: phoneflip 1.3s 39.6s cubic-bezier(.2,.85,.25,1.05) both, phonefloat 7s 41s ease-in-out both; }
+@keyframes phoneflip {
+  0%   { opacity: 0; transform: translateY(160px) rotateY(130deg) rotateZ(10deg) scale(.8) }
+  100% { opacity: 1; transform: none }
+}
+#s6 .phone::after { animation: glare 1.1s 40.9s ease both; }
 
 /* ============ S7 UPLOAD / CAST ============ */
 #s7 { animation-delay: 46s; animation-duration: 8s; }
@@ -223,7 +256,13 @@ body { width: 1920px; height: 1080px; overflow: hidden; font-family: "Exo 2", sa
 #s7 .head { position: absolute; left: 0; right: 0; top: 130px; text-align: center; }
 #s7 .kicker { animation: rise .8s 46.3s both; }
 #s7 .h1 { font-size: 110px; margin-top: 22px; animation: rise .9s 46.5s both; }
-#s7 .phone { left: 290px; top: 340px; width: 310px; animation: rise 1s 46.8s both; }
+#s7 .phone { left: 290px; top: 340px; width: 310px; transform-style: preserve-3d;
+  animation: phoneslide 1.5s 46.7s cubic-bezier(.2,.85,.25,1.03) both, phonefloat 7s 48.4s ease-in-out both; }
+@keyframes phoneslide {
+  0%   { opacity: 0; transform: translateX(-700px) rotateY(200deg) scale(.7) }
+  100% { opacity: 1; transform: none }
+}
+#s7 .phone::after { animation: glare 1.1s 48.3s ease both; }
 #s7 .fanwrap { right: 260px; top: 365px; width: 540px; height: 540px; margin: 0; animation: rise 1s 47s both; }
 #s7 .rotor { animation: spin .42s 46s linear infinite; }
 #s7 .rotor .xbar { opacity: .16; }
@@ -429,6 +468,14 @@ body { width: 1920px; height: 1080px; overflow: hidden; font-family: "Exo 2", sa
   <div class="flash" style="animation-delay:53.8s"></div>
 </div>
 
+<svg width="0" height="0" style="position:absolute">
+  <filter id="goo">
+    <feGaussianBlur in="SourceGraphic" stdDeviation="18" result="b" />
+    <feColorMatrix in="b" mode="matrix"
+      values="1 0 0 0 0  0 1 0 0 0  0 0 1 0 0  0 0 0 24 -11" />
+  </filter>
+</svg>
+
 <script>
 /* drifting dust particles (deterministic) */
 let seed = 5;
@@ -444,6 +491,30 @@ for (let i = 0; i < 70; i++) {
     { duration: 65000, fill: "both" }
   );
   field.appendChild(d);
+}
+
+/* liquid goo wipes — one per scene cut, blobs peak (full cover) at the cut */
+const stage = document.getElementById("stage");
+const blobCols = [
+  "radial-gradient(circle at 35% 35%, #9f7bff, #7f5bff)",
+  "radial-gradient(circle at 35% 35%, #5beaff, #00b4e6)",
+  "radial-gradient(circle at 35% 35%, #ff5dff, #c43be0)",
+  "radial-gradient(circle at 35% 35%, #ffa53c, #ff6a30)",
+];
+const blobPos = [
+  [8,20,0],[25,75,1],[42,18,2],[50,60,3],[64,85,0],
+  [72,25,1],[88,70,2],[96,15,3],[15,95,1],[50,40,2],
+];
+for (const cut of [5.8, 13.8, 21.8, 29.8, 38.8, 45.8, 53.8]) {
+  const w = document.createElement("div");
+  w.className = "lwipe";
+  for (const [x, y, c] of blobPos) {
+    const b = document.createElement("span");
+    const jitter = (rnd() - 0.5) * 0.12;
+    b.style.cssText = `left:${x}%;top:${y}%;background:${blobCols[c]};animation-delay:${(cut - 0.65 + jitter).toFixed(3)}s;`;
+    w.appendChild(b);
+  }
+  stage.appendChild(w);
 }
 </script>
 </body>
