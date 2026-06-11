@@ -23,11 +23,10 @@ $FF -y -i "$DIR/assets/footage/logo-animation.mp4" \
 # B: comp 6-14s (frames 180-419) — the holograms
 $FF -y -framerate 30 -start_number 180 -i "$FRAMES/f%05d.jpg" -frames:v 240 $ENC "$TMP/b.mp4"
 
-# C: real footage 4.3-8.7s with brand caption
-$FF -y -ss 4.3 -t 4.4 -i "$DIR/assets/footage/real-displays.mp4" -vf "fps=30,\
-drawbox=x=0:y=850:w=1920:h=230:color=black@0.45:t=fill,\
-drawtext=fontfile=$FONT:text='REAL FOOTAGE — HOLOFEX DISPLAYS':fontcolor=0x00E0FF:fontsize=32:x=140:y=905:shadowcolor=black@0.7:shadowx=2:shadowy=2:alpha='if(lt(t\,0.4)\,t/0.4\,if(gt(t\,4.0)\,max(0\,(4.4-t)/0.4)\,1))',\
-drawtext=fontfile=$FONT:text='Real holograms. No screens. Just light.':fontcolor=white:fontsize=58:x=140:y=955:shadowcolor=black@0.7:shadowx=2:shadowy=2:alpha='if(lt(t\,0.5)\,t/0.5\,if(gt(t\,4.0)\,max(0\,(4.4-t)/0.4)\,1))'" \
+# C: real footage 4.3-8.7s with brand caption (pre-rendered PNG, alpha fades)
+$FF -y -ss 4.3 -t 4.4 -i "$DIR/assets/footage/real-displays.mp4" \
+  -loop 1 -t 4.4 -i "$DIR/assets/footage-caption.png" \
+  -filter_complex "[0]fps=30[v];[1]format=rgba,fade=in:st=0:d=0.4:alpha=1,fade=out:st=3.9:d=0.5:alpha=1[cap];[v][cap]overlay" \
   $ENC "$TMP/c.mp4"
 
 # D: comp 14-65s (frames 420-1949) — device through end card
