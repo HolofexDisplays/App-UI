@@ -1,0 +1,399 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Holofex Studio — Web</title>
+<style>
+@font-face { font-family: "Exo 2"; src: url("../video/assets/Exo2.ttf") format("truetype"); font-weight: 100 900; }
+:root {
+  --cyan:#00e0ff; --purple:#7f5bff; --magenta:#ff2dff; --orange:#ff8a00; --teal:#00ffd1;
+  --bg:#07070d; --panel:#0e0e18; --panel2:#12121f; --line:#23233a; --dim:#9a9ab4;
+  --grad:linear-gradient(90deg,var(--cyan),var(--purple) 38%,var(--magenta) 66%,var(--orange));
+}
+* { margin:0; padding:0; box-sizing:border-box; }
+body { background:var(--bg); color:#f4f4fa; font-family:"Exo 2",sans-serif; overflow:hidden; }
+#app { display:flex; height:100vh; }
+
+/* ambient glow */
+.bgfx { position:fixed; inset:-10%; pointer-events:none; z-index:0;
+  background: radial-gradient(30% 26% at 8% 10%, rgba(0,224,255,.08), transparent 70%),
+              radial-gradient(32% 28% at 94% 90%, rgba(255,45,255,.07), transparent 70%); }
+
+/* ---------- sidebar ---------- */
+#side { width:264px; flex:0 0 264px; background:var(--panel); border-right:1px solid var(--line);
+  display:flex; flex-direction:column; padding:28px 20px; position:relative; z-index:2; }
+.brand { display:flex; align-items:center; gap:14px; padding:0 8px 30px; }
+.brand img { width:42px; filter:drop-shadow(0 0 14px rgba(127,91,255,.6)); }
+.brand b { font-size:21px; letter-spacing:.3em; font-weight:700; }
+.brand b span { background:var(--grad); -webkit-background-clip:text; background-clip:text; color:transparent; }
+.navlab { font-size:11px; letter-spacing:.4em; color:var(--dim); padding:18px 10px 10px; }
+.nbtn { display:flex; align-items:center; gap:14px; width:100%; padding:14px 16px; border:0; border-radius:14px;
+  background:transparent; color:var(--dim); font:600 16px/1 "Exo 2"; letter-spacing:.06em; cursor:pointer; text-align:left; }
+.nbtn i { font-style:normal; width:22px; text-align:center; font-size:17px; }
+.nbtn:hover { color:#fff; background:rgba(255,255,255,.04); }
+.nbtn.active { color:#fff; background:linear-gradient(90deg, rgba(0,224,255,.14), rgba(127,91,255,.14));
+  box-shadow:inset 0 0 0 1px rgba(127,91,255,.4); }
+.side-cta { margin-top:auto; padding:18px; border-radius:18px; background:var(--panel2); border:1px solid var(--line); }
+.side-cta p { font-size:13px; color:var(--dim); line-height:1.5; margin-bottom:12px; }
+.side-cta .bar { height:8px; border-radius:8px; background:rgba(255,255,255,.08); overflow:hidden; }
+.side-cta .bar i { display:block; height:100%; width:60%; background:var(--grad); border-radius:8px; }
+.side-cta b { font-size:14px; }
+
+/* ---------- main ---------- */
+#main { flex:1; display:flex; flex-direction:column; position:relative; z-index:1; min-width:0; }
+#topbar { height:76px; flex:0 0 76px; display:flex; align-items:center; gap:22px; padding:0 36px;
+  border-bottom:1px solid var(--line); background:rgba(10,10,18,.7); backdrop-filter:blur(10px); }
+#topbar .search { flex:0 1 440px; display:flex; align-items:center; gap:12px; padding:11px 18px; border-radius:12px;
+  background:var(--panel2); border:1px solid var(--line); color:var(--dim); font-size:14px; }
+#topbar .sp { flex:1; }
+.credits { display:flex; align-items:center; gap:10px; padding:9px 18px; border-radius:30px;
+  background:var(--panel2); border:1px solid var(--line); font-weight:600; font-size:15px; }
+.credits .dot { width:9px; height:9px; border-radius:50%; background:var(--grad); box-shadow:0 0 10px var(--magenta); }
+.avatar { width:42px; height:42px; border-radius:50%; background:linear-gradient(135deg,var(--purple),var(--magenta));
+  display:grid; place-items:center; font-weight:700; font-size:16px; }
+#content { flex:1; overflow:hidden; position:relative; }
+.screen { position:absolute; inset:0; padding:40px 48px; overflow-y:auto; display:none; }
+.screen.active { display:block; animation:scrfade .35s ease both; }
+@keyframes scrfade { from { opacity:0; transform:translateY(10px) } to { opacity:1; transform:none } }
+
+h1.page { font-size:42px; font-weight:800; letter-spacing:.03em; margin-bottom:6px; }
+p.pagesub { color:var(--dim); font-size:17px; margin-bottom:34px; }
+.glab { font-size:12px; letter-spacing:.42em; color:var(--cyan); font-weight:600; margin:30px 0 14px; }
+
+/* ---------- dashboard ---------- */
+.hero { position:relative; border-radius:24px; padding:46px 50px; overflow:hidden;
+  background:linear-gradient(120deg,#10101e, #151527 60%, #181830); border:1px solid var(--line); }
+.hero::after { content:""; position:absolute; right:-120px; top:-160px; width:560px; height:560px; border-radius:50%;
+  background:radial-gradient(closest-side, rgba(127,91,255,.28), rgba(0,224,255,.10) 60%, transparent 75%); }
+.hero .k { font-size:13px; letter-spacing:.42em; color:var(--cyan); font-weight:600; margin-bottom:14px; }
+.hero h2 { font-size:54px; font-weight:800; line-height:1.05; }
+.hero h2 span { background:var(--grad); -webkit-background-clip:text; background-clip:text; color:transparent; }
+.hero p { color:var(--dim); font-size:18px; margin:16px 0 28px; max-width:560px; }
+.cta { display:inline-flex; align-items:center; gap:12px; padding:17px 34px; border:0; border-radius:16px;
+  background:var(--grad); color:#fff; font:700 17px "Exo 2"; letter-spacing:.08em; cursor:pointer;
+  box-shadow:0 12px 40px rgba(255,45,255,.35); position:relative; z-index:1; }
+.cta:hover { filter:brightness(1.1); }
+.statrow { display:grid; grid-template-columns:repeat(4,1fr); gap:22px; margin-top:26px; }
+.stat { border-radius:20px; padding:26px 28px; background:var(--panel2); border:1px solid var(--line); }
+.stat b { font-size:36px; font-weight:800; }
+.stat b.g { background:var(--grad); -webkit-background-clip:text; background-clip:text; color:transparent; }
+.stat span { display:block; color:var(--dim); font-size:14px; letter-spacing:.08em; margin-top:6px; }
+.grid { display:grid; grid-template-columns:repeat(4,1fr); gap:22px; }
+.tile { border-radius:20px; overflow:hidden; background:var(--panel2); border:1px solid var(--line); cursor:pointer;
+  transition:transform .25s, box-shadow .25s; }
+.tile:hover { transform:translateY(-6px); box-shadow:0 18px 50px rgba(0,0,0,.6), 0 0 40px rgba(127,91,255,.25); }
+.thumb { height:150px; position:relative; }
+.tile .meta { display:flex; justify-content:space-between; align-items:center; padding:14px 18px; }
+.tile .meta b { font-size:15px; font-weight:600; }
+.tile .meta span { font-size:12px; color:var(--dim); }
+.badge { font-size:11px; letter-spacing:.14em; padding:5px 12px; border-radius:20px; background:rgba(0,255,209,.12);
+  color:var(--teal); border:1px solid rgba(0,255,209,.3); }
+
+/* hologram thumbs (pure CSS art) */
+.t1 { background:radial-gradient(circle at 50% 55%, #133, transparent 60%), conic-gradient(from 200deg at 50% 50%, #07202c, #0b4b66, #00e0ff33, #07202c); }
+.t1::after { content:""; position:absolute; inset:30% 36%; border:3px solid var(--cyan); border-radius:14px;
+  box-shadow:0 0 26px var(--cyan), inset 0 0 18px rgba(0,224,255,.5); transform:rotate(18deg); }
+.t2 { background:radial-gradient(circle at 50% 60%, #1a0a24, transparent 70%), conic-gradient(from 0deg, #14021c, #581a8a55, #ff2dff33, #14021c); }
+.t2::after { content:""; position:absolute; inset:26% 40%; border-radius:50%;
+  background:radial-gradient(circle at 38% 32%, #ff8aff, #b21ddd 65%, #4d0866); box-shadow:0 0 34px rgba(255,45,255,.75); }
+.t3 { background:radial-gradient(circle at 50% 55%, #241303, transparent 65%), conic-gradient(from 120deg, #1c0d02, #a8500a55, #ff8a0033, #1c0d02); }
+.t3::after { content:""; position:absolute; left:30%; right:30%; top:38%; bottom:34%;
+  background:linear-gradient(135deg, var(--orange), #ff5a3c); border-radius:8px; transform:skewX(-14deg);
+  box-shadow:0 0 30px rgba(255,138,0,.7); }
+.t4 { background:radial-gradient(circle at 50% 55%, #02201c, transparent 65%), conic-gradient(from 300deg, #02140f, #0a7a6055, #00ffd133, #02140f); }
+.t4::after { content:""; position:absolute; inset:28% 38%; border:3px solid var(--teal); transform:rotate(45deg);
+  box-shadow:0 0 26px rgba(0,255,209,.7), inset 0 0 16px rgba(0,255,209,.4); }
+.t5 { background:radial-gradient(circle at 50% 55%, #101a33, transparent 65%), conic-gradient(from 80deg, #060c1f, #1d3fa055, #2e7cff33, #060c1f); }
+.t5::after { content:""; position:absolute; inset:30% 30%; border-radius:50%;
+  border:3px dashed #6ea8ff; box-shadow:0 0 26px rgba(46,124,255,.7); }
+.t6 { background:radial-gradient(circle at 50% 55%, #220a16, transparent 65%), conic-gradient(from 20deg, #16030c, #8a1a5055, #ff2d8a33, #16030c); }
+.t6::after { content:""; position:absolute; inset:26% 42%; background:linear-gradient(180deg,#ff5db8,#b2186e);
+  clip-path:polygon(50% 0, 100% 86%, 0 86%); filter:drop-shadow(0 0 22px rgba(255,45,138,.8)); }
+.t7 { background:radial-gradient(circle at 50% 55%, #1c1c08, transparent 65%), conic-gradient(from 250deg, #131102, #8a7a1a55, #ffe03c33, #131102); }
+.t7::after { content:""; position:absolute; inset:32% 34%; border:3px solid #ffe03c; border-radius:50% 0 50% 0;
+  box-shadow:0 0 26px rgba(255,224,60,.6); }
+.t8 { background:radial-gradient(circle at 50% 55%, #0a1426, transparent 65%), conic-gradient(from 160deg, #04101f, #1a6a8a55, #00e0ff22, #04101f); }
+.t8::after { content:""; position:absolute; inset:30% 30%; border-radius:50%;
+  background:conic-gradient(var(--cyan), var(--purple), var(--magenta), var(--orange), var(--cyan));
+  -webkit-mask:radial-gradient(circle, transparent 52%, #000 54%); mask:radial-gradient(circle, transparent 52%, #000 54%);
+  filter:drop-shadow(0 0 18px rgba(127,91,255,.8)); animation:spin 7s linear infinite; }
+@keyframes spin { to { transform:rotate(360deg) } }
+
+/* ---------- create ---------- */
+.create-grid { display:grid; grid-template-columns:1.25fr 1fr; gap:30px; align-items:start; }
+.card { border-radius:22px; background:var(--panel2); border:1px solid var(--line); padding:30px 32px; }
+.modes { display:flex; gap:12px; margin-bottom:24px; }
+.mode { padding:12px 26px; border-radius:30px; border:1px solid var(--line); background:transparent; color:var(--dim);
+  font:600 15px "Exo 2"; letter-spacing:.08em; cursor:pointer; }
+.mode.active { color:#fff; background:linear-gradient(90deg, rgba(0,224,255,.18), rgba(127,91,255,.18));
+  border-color:rgba(127,91,255,.6); }
+.prompt { width:100%; min-height:150px; resize:none; border-radius:16px; border:1px solid rgba(127,91,255,.45);
+  background:#0a0a14; color:#fff; font:400 19px/1.6 "Exo 2"; padding:20px 22px; outline:none; }
+.prompt::placeholder { color:#55556e; }
+.prompt:focus { box-shadow:0 0 0 3px rgba(127,91,255,.25), 0 0 40px rgba(127,91,255,.18); }
+.enh { float:right; margin-top:12px; padding:10px 20px; border-radius:12px; border:1px solid rgba(0,224,255,.5);
+  background:rgba(0,224,255,.1); color:var(--cyan); font:600 14px "Exo 2"; letter-spacing:.1em; cursor:pointer; }
+.chips { display:flex; flex-wrap:wrap; gap:12px; }
+.chip { padding:11px 22px; border-radius:30px; border:1px solid var(--line); background:#0a0a14; color:var(--dim);
+  font:600 14px "Exo 2"; cursor:pointer; }
+.chip.active { color:#fff; border-color:transparent; background:linear-gradient(#12121f,#12121f) padding-box,
+  var(--grad) border-box; border:1px solid transparent; box-shadow:0 0 24px rgba(255,45,255,.25); }
+.outrow { display:flex; justify-content:space-between; align-items:center; padding:17px 4px; border-bottom:1px solid var(--line); font-size:16px; }
+.outrow:last-of-type { border-bottom:0; }
+.outrow span { color:var(--dim); }
+.outrow b { color:var(--cyan); font-weight:600; }
+.gen-btn { width:100%; margin-top:24px; padding:20px; border:0; border-radius:18px; background:var(--grad);
+  color:#fff; font:700 19px "Exo 2"; letter-spacing:.14em; cursor:pointer; box-shadow:0 14px 44px rgba(255,45,255,.35); }
+.gen-btn:hover { filter:brightness(1.12); }
+
+/* ---------- generating ---------- */
+#screen-generating { display:none; place-items:center; }
+#screen-generating.active { display:grid; }
+.orb { width:230px; height:230px; border-radius:50%; position:relative; margin:0 auto 40px;
+  background:conic-gradient(var(--cyan),var(--purple),var(--magenta),var(--orange),var(--cyan));
+  animation:spin 3s linear infinite; -webkit-mask:radial-gradient(circle, transparent 56%, #000 58%);
+  mask:radial-gradient(circle, transparent 56%, #000 58%); filter:drop-shadow(0 0 50px rgba(127,91,255,.7)); }
+.gen-wrap { text-align:center; }
+.gen-wrap h2 { font-size:44px; font-weight:800; letter-spacing:.04em; }
+.gen-stage { color:var(--dim); font-size:19px; margin-top:14px; min-height:28px; }
+.gen-stage b { color:var(--cyan); font-weight:600; }
+.gbar { width:520px; height:10px; margin:30px auto 0; border-radius:10px; background:rgba(255,255,255,.08); overflow:hidden; }
+.gbar i { display:block; height:100%; width:0%; border-radius:10px; background:var(--grad);
+  box-shadow:0 0 22px rgba(255,45,255,.6); transition:width .3s; }
+
+/* ---------- preview ---------- */
+.prev-grid { display:grid; grid-template-columns:1.4fr 1fr; gap:34px; align-items:start; }
+.fanstage { border-radius:24px; background:#05050a; border:1px solid var(--line); height:560px; position:relative; overflow:hidden; }
+.fanstage .ring { position:absolute; left:50%; top:50%; width:430px; height:430px; margin:-215px 0 0 -215px;
+  border-radius:50%; border:10px solid #14141e; box-shadow:inset 0 0 50px rgba(0,0,0,.8), 0 0 60px rgba(127,91,255,.15); }
+.fanstage .blur { position:absolute; left:50%; top:50%; width:400px; height:400px; margin:-200px 0 0 -200px; border-radius:50%;
+  background:radial-gradient(closest-side, rgba(127,91,255,.10), rgba(0,224,255,.05) 60%, transparent 75%);
+  animation:spin 4s linear infinite; }
+.fanstage .holo { position:absolute; left:50%; top:50%; width:240px; margin:-120px 0 0 -120px;
+  filter:drop-shadow(0 0 50px rgba(0,224,255,.7)); animation:bob 5s ease-in-out infinite; }
+@keyframes bob { 0%,100% { translate:0 0 } 50% { translate:0 -16px } }
+.prev-meta .outrow b { color:#fff; }
+.actions { display:grid; gap:14px; margin-top:26px; }
+.act { display:flex; align-items:center; justify-content:center; gap:12px; padding:18px; border-radius:16px;
+  font:700 17px "Exo 2"; letter-spacing:.1em; cursor:pointer; border:1px solid var(--line); background:var(--panel2); color:#fff; }
+.act.primary { background:var(--grad); border:0; box-shadow:0 12px 40px rgba(255,45,255,.3); }
+.act:hover { filter:brightness(1.12); }
+
+/* toast */
+#toast { position:fixed; left:50%; bottom:46px; transform:translate(-50%,140px); z-index:50;
+  display:flex; align-items:center; gap:14px; padding:18px 30px; border-radius:18px; background:#10101ce6;
+  border:1px solid rgba(0,255,209,.5); box-shadow:0 18px 60px rgba(0,0,0,.7), 0 0 40px rgba(0,255,209,.2);
+  font:600 17px "Exo 2"; transition:transform .45s cubic-bezier(.2,.9,.25,1.1); }
+#toast.on { transform:translate(-50%,0); }
+#toast .tick { width:30px; height:30px; border-radius:50%; background:rgba(0,255,209,.15); color:var(--teal);
+  display:grid; place-items:center; font-size:16px; }
+
+/* ---------- displays ---------- */
+.devrow { display:flex; align-items:center; gap:24px; padding:26px 30px; border-radius:20px; background:var(--panel2);
+  border:1px solid var(--line); margin-bottom:18px; }
+.devrow .ic { width:64px; height:64px; border-radius:50%; border:3px solid #2a2a40; position:relative; flex:0 0 64px; }
+.devrow .ic::after { content:""; position:absolute; inset:14px; background:
+  linear-gradient(45deg, transparent 46%, var(--cyan) 47%, var(--cyan) 53%, transparent 54%),
+  linear-gradient(-45deg, transparent 46%, var(--cyan) 47%, var(--cyan) 53%, transparent 54%); }
+.devrow b { font-size:19px; } .devrow small { display:block; color:var(--dim); font-size:14px; margin-top:4px; }
+.devrow .sp { flex:1; }
+.on-pill { font-size:13px; letter-spacing:.12em; padding:8px 18px; border-radius:20px; color:var(--teal);
+  background:rgba(0,255,209,.1); border:1px solid rgba(0,255,209,.35); }
+</style>
+</head>
+<body>
+<div class="bgfx"></div>
+<div id="app">
+  <aside id="side">
+    <div class="brand"><img src="../assets/logo.svg" /><b>HOL<span>O</span>FEX</b></div>
+    <div class="navlab">STUDIO</div>
+    <button class="nbtn active" data-go="screen-dash"><i>⌂</i>Dashboard</button>
+    <button class="nbtn" data-go="screen-create"><i>✦</i>Create</button>
+    <button class="nbtn" data-go="screen-library"><i>▦</i>Library</button>
+    <button class="nbtn" data-go="screen-displays"><i>◉</i>Displays</button>
+    <div class="navlab">ACCOUNT</div>
+    <button class="nbtn"><i>◌</i>Settings</button>
+    <div class="side-cta">
+      <b>Studio Pro</b>
+      <p>240 of 400 credits left this month</p>
+      <div class="bar"><i></i></div>
+    </div>
+  </aside>
+
+  <div id="main">
+    <div id="topbar">
+      <div class="search">⌕ &nbsp;Search holograms, styles, displays…</div>
+      <div class="sp"></div>
+      <div class="credits"><span class="dot"></span>240 credits</div>
+      <div class="avatar">T</div>
+    </div>
+    <div id="content">
+
+      <!-- DASHBOARD -->
+      <section class="screen active" id="screen-dash">
+        <div class="hero">
+          <div class="k">IDEA → HOLOGRAM IN MINUTES</div>
+          <h2>Create your<br/><span>hologram</span></h2>
+          <p>AI-generated 3D animations, optimised for real holographic fan displays. No design skills needed.</p>
+          <button class="cta" data-go="screen-create">✦ &nbsp;NEW HOLOGRAM</button>
+        </div>
+        <div class="statrow">
+          <div class="stat"><b class="g">18</b><span>holograms created</span></div>
+          <div class="stat"><b>2</b><span>displays online</span></div>
+          <div class="stat"><b class="g">4.2k</b><span>views this week</span></div>
+          <div class="stat"><b>6s</b><span>avg. loop length</span></div>
+        </div>
+        <div class="glab">RECENT CREATIONS</div>
+        <div class="grid">
+          <div class="tile"><div class="thumb t1"></div><div class="meta"><div><b>neon-hex-cube</b><br/><span>2 days ago</span></div><span class="badge">CAST</span></div></div>
+          <div class="tile"><div class="thumb t2"></div><div class="meta"><div><b>plasma-orb</b><br/><span>4 days ago</span></div><span class="badge">CAST</span></div></div>
+          <div class="tile"><div class="thumb t3"></div><div class="meta"><div><b>amber-product</b><br/><span>last week</span></div><span class="badge">CAST</span></div></div>
+          <div class="tile"><div class="thumb t8"></div><div class="meta"><div><b>spectrum-ring</b><br/><span>last week</span></div><span class="badge">CAST</span></div></div>
+        </div>
+      </section>
+
+      <!-- CREATE -->
+      <section class="screen" id="screen-create">
+        <h1 class="page">Create</h1>
+        <p class="pagesub">Describe it — Holofex builds a seamless 3D loop, colour-graded for fan hardware.</p>
+        <div class="create-grid">
+          <div class="card">
+            <div class="modes">
+              <button class="mode active">○ Logo</button>
+              <button class="mode">◇ Product</button>
+              <button class="mode">✦ Scene</button>
+            </div>
+            <div class="glab" style="margin-top:6px">PROMPT</div>
+            <textarea class="prompt" id="prompt" placeholder='Describe your hologram… e.g. "chrome wireframe cube slowly rotating, neon cyan and magenta light trails"'></textarea>
+            <button class="enh">✦ Enhance</button>
+            <div style="clear:both"></div>
+            <div class="glab">STYLE</div>
+            <div class="chips">
+              <button class="chip active">Neon Wireframe</button>
+              <button class="chip">Photoreal</button>
+              <button class="chip">Particle Flow</button>
+              <button class="chip">Liquid Chrome</button>
+              <button class="chip">Glass Refraction</button>
+            </div>
+          </div>
+          <div class="card">
+            <div class="glab" style="margin-top:0">OUTPUT</div>
+            <div class="outrow"><span>Display</span><b>Holofex X1 · 65cm ▾</b></div>
+            <div class="outrow"><span>Resolution</span><b>1024 × 1024 ▾</b></div>
+            <div class="outrow"><span>Loop length</span><b>6 seconds ▾</b></div>
+            <div class="outrow"><span>Seamless loop</span><b>ON</b></div>
+            <button class="gen-btn" id="gen">✦ &nbsp;GENERATE HOLOGRAM</button>
+          </div>
+        </div>
+      </section>
+
+      <!-- GENERATING -->
+      <section class="screen" id="screen-generating">
+        <div class="gen-wrap">
+          <div class="orb"></div>
+          <h2>Generating…</h2>
+          <div class="gen-stage" id="stage-line">Warming up the <b>holo engine</b></div>
+          <div class="gbar"><i id="gbar"></i></div>
+        </div>
+      </section>
+
+      <!-- PREVIEW -->
+      <section class="screen" id="screen-preview">
+        <h1 class="page">Preview</h1>
+        <p class="pagesub">Simulated on a Holofex X1 — exactly how it will hang in the air.</p>
+        <div class="prev-grid">
+          <div class="fanstage">
+            <div class="ring"></div><div class="blur"></div>
+            <img class="holo" src="../assets/logo.svg" />
+          </div>
+          <div class="prev-meta">
+            <div class="card">
+              <div class="glab" style="margin-top:0">NEON-HEX-CUBE.MP4</div>
+              <div class="outrow"><span>Resolution</span><b>1024 × 1024</b></div>
+              <div class="outrow"><span>Loop</span><b>6s · seamless</b></div>
+              <div class="outrow"><span>Optimised for</span><b>Holofex X1</b></div>
+              <div class="actions">
+                <button class="act primary" id="cast">◉ &nbsp;SEND TO DISPLAY</button>
+                <button class="act">⬇ &nbsp;EXPORT MP4</button>
+                <button class="act">✦ &nbsp;REMIX</button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- LIBRARY -->
+      <section class="screen" id="screen-library">
+        <h1 class="page">Library</h1>
+        <p class="pagesub">Every hologram you've generated — ready to cast, export or remix.</p>
+        <div class="grid">
+          <div class="tile"><div class="thumb t1"></div><div class="meta"><div><b>neon-hex-cube</b><br/><span>6s loop</span></div><span class="badge">CAST</span></div></div>
+          <div class="tile"><div class="thumb t2"></div><div class="meta"><div><b>plasma-orb</b><br/><span>6s loop</span></div><span class="badge">CAST</span></div></div>
+          <div class="tile"><div class="thumb t3"></div><div class="meta"><div><b>amber-product</b><br/><span>4s loop</span></div><span class="badge">CAST</span></div></div>
+          <div class="tile"><div class="thumb t4"></div><div class="meta"><div><b>emerald-prism</b><br/><span>8s loop</span></div><span class="badge">CAST</span></div></div>
+          <div class="tile"><div class="thumb t5"></div><div class="meta"><div><b>orbit-dash</b><br/><span>6s loop</span></div><span class="badge">CAST</span></div></div>
+          <div class="tile"><div class="thumb t6"></div><div class="meta"><div><b>magenta-peak</b><br/><span>6s loop</span></div><span class="badge">CAST</span></div></div>
+          <div class="tile"><div class="thumb t7"></div><div class="meta"><div><b>citrine-leaf</b><br/><span>5s loop</span></div><span class="badge">CAST</span></div></div>
+          <div class="tile"><div class="thumb t8"></div><div class="meta"><div><b>spectrum-ring</b><br/><span>6s loop</span></div><span class="badge">CAST</span></div></div>
+        </div>
+      </section>
+
+      <!-- DISPLAYS -->
+      <section class="screen" id="screen-displays">
+        <h1 class="page">Displays</h1>
+        <p class="pagesub">Your paired holographic fans.</p>
+        <div class="devrow">
+          <div class="ic"></div>
+          <div><b>Holofex X1 — Showroom</b><small>65cm · 1024px · firmware 2.4.1</small></div>
+          <div class="sp"></div><span class="on-pill">● ONLINE</span>
+        </div>
+        <div class="devrow">
+          <div class="ic"></div>
+          <div><b>Holofex X1 — Front Window</b><small>65cm · 1024px · firmware 2.4.1</small></div>
+          <div class="sp"></div><span class="on-pill">● ONLINE</span>
+        </div>
+      </section>
+
+    </div>
+  </div>
+</div>
+
+<div id="toast"><span class="tick">✓</span>Casting <b>&nbsp;neon-hex-cube&nbsp;</b> to Holofex X1 — over Wi-Fi</div>
+
+<script>
+const go = id => {
+  document.querySelectorAll(".screen").forEach(s => s.classList.remove("active"));
+  document.getElementById(id).classList.add("active");
+  document.querySelectorAll(".nbtn[data-go]").forEach(b => b.classList.toggle("active", b.dataset.go === id));
+};
+document.querySelectorAll("[data-go]").forEach(el => el.addEventListener("click", () => go(el.dataset.go)));
+
+/* demo generation flow */
+const stages = [
+  ["Warming up the <b>holo engine</b>", 8],
+  ["Building the <b>3D model</b>", 34],
+  ["Rendering <b>360° light field</b>", 62],
+  ["Colour-grading for <b>fan hardware</b>", 84],
+  ["Sealing the <b>seamless loop</b>", 100],
+];
+document.getElementById("gen").addEventListener("click", () => {
+  go("screen-generating");
+  const bar = document.getElementById("gbar"), line = document.getElementById("stage-line");
+  let i = 0;
+  const step = () => {
+    if (i < stages.length) {
+      line.innerHTML = stages[i][0]; bar.style.width = stages[i][1] + "%"; i++;
+      setTimeout(step, 620);
+    } else setTimeout(() => go("screen-preview"), 350);
+  };
+  step();
+});
+document.getElementById("cast").addEventListener("click", () => {
+  const t = document.getElementById("toast");
+  t.classList.add("on");
+  setTimeout(() => t.classList.remove("on"), 2600);
+});
+</script>
+</body>
+</html>

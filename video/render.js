@@ -4,14 +4,15 @@ const { chromium } = require("/opt/node22/lib/node_modules/playwright");
 const fs = require("fs");
 
 const FPS = 30;
-const DURATION = 65; // seconds
+const DURATION = Number(process.env.DURATION || 65); // seconds
+const PAGE = process.env.PAGE || "explainer.html";
 const OUT = process.env.FRAMES_DIR || "/tmp/frames";
 
 (async () => {
   fs.mkdirSync(OUT, { recursive: true });
   const browser = await chromium.launch();
   const page = await browser.newPage({ viewport: { width: 1920, height: 1080 } });
-  await page.goto("file://" + __dirname + "/explainer.html", { waitUntil: "networkidle" });
+  await page.goto("file://" + __dirname + "/" + PAGE, { waitUntil: "networkidle" });
   await page.evaluate(() => document.fonts.ready);
 
   // freeze the clock: pause every animation (CSS + WAAPI)
