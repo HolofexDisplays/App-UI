@@ -3,8 +3,8 @@
 const fs = require("fs");
 
 const SR = 44100;
-const DUR = 65;
-const N = SR * DUR;
+const DUR = 69.4; // intro (6s) + S2 (8s) + real footage (4.4s) + remaining scenes (51s)
+const N = Math.round(SR * DUR);
 const out = new Float32Array(N);
 
 // chord progression (Hz), one chord per ~16s, minor/dreamy
@@ -14,7 +14,7 @@ const chords = [
   [116.54, 174.61, 233.08, 293.66],  // Bb add9
   [130.81, 155.56, 196.0, 311.13],   // Cm7
 ];
-const CHORD_LEN = 16.25;
+const CHORD_LEN = 17.35;
 
 function env(t, start, len, atk, rel) {
   const x = t - start;
@@ -39,7 +39,7 @@ for (let i = 0; i < N; i++) {
   s *= e * 0.045;
 
   // gentle noise whoosh at each scene boundary
-  for (const cut of [5.8, 13.8, 21.8, 29.8, 38.8, 45.8, 53.8]) {
+  for (const cut of [5.8, 13.8, 18.2, 26.2, 34.2, 43.2, 50.2, 58.2]) {
     const w = env(t, cut - 0.45, 1.0, 0.45, 0.5);
     if (w > 0) s += (Math.random() * 2 - 1) * 0.022 * w * w;
   }

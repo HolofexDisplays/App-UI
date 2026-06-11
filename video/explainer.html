@@ -115,15 +115,20 @@ body { width: 1920px; height: 1080px; overflow: hidden; font-family: "Exo 2", sa
 #s3 .l2 { margin-top: 26px; animation: rise .9s 16.1s both; }
 
 .fanwrap { position: absolute; right: 200px; top: 50%; width: 600px; height: 600px; margin-top: -300px; }
-.fan-ring { position: absolute; inset: 0; border-radius: 50%; border: 3px solid #1d1d2e;
-  box-shadow: 0 0 70px rgba(127,91,255,.18), inset 0 0 60px rgba(0,0,0,.8); }
+.fan-ring { position: absolute; inset: 0; border-radius: 50%; border: 14px solid #14141e;
+  box-shadow: 0 0 70px rgba(127,91,255,.18), inset 0 0 60px rgba(0,0,0,.8), inset 0 2px 0 rgba(255,255,255,.07), 0 2px 0 rgba(255,255,255,.05); }
 .rotor { position: absolute; inset: 0; }
-.blade { position: absolute; left: 50%; top: 50%; width: 46px; height: 252px; margin-left: -23px;
-  transform-origin: 50% 0%; border-radius: 10px 10px 26px 26px;
-  background: linear-gradient(180deg, #20202e, #15151f 75%);
+/* X-rotor: two full-width bars with a cyan LED strip down each */
+.xbar { position: absolute; left: 50%; top: 50%; width: 26px; height: 500px; margin: -250px 0 0 -13px;
+  border-radius: 13px; background: linear-gradient(90deg, #101018, #232330 50%, #101018);
   border: 1px solid #2c2c40; }
-.blade .leds { position: absolute; left: 50%; top: 26px; margin-left: -5px; display: flex; flex-direction: column; gap: 24px; }
-.blade .leds i { width: 10px; height: 10px; border-radius: 50%; display: block; }
+.xbar::after { content: ""; position: absolute; left: 50%; top: 12px; bottom: 12px; width: 5px; margin-left: -2.5px;
+  border-radius: 4px; background: linear-gradient(180deg, var(--cyan), #9ff5ff 50%, var(--cyan));
+  box-shadow: 0 0 14px var(--cyan), 0 0 36px rgba(0,224,255,.65); }
+.xbar.a { transform: rotate(45deg); }
+.xbar.b { transform: rotate(-45deg); }
+.pole { position: absolute; left: 50%; top: 50%; width: 24px; height: 620px; margin-left: -12px; z-index: 1;
+  background: linear-gradient(90deg, #0a0a12, #20202c 50%, #0a0a12); }
 .hub { position: absolute; left: 50%; top: 50%; width: 110px; height: 110px; margin: -55px 0 0 -55px; border-radius: 50%;
   background: radial-gradient(circle at 35% 32%, #2c2c40, #14141e 70%); border: 2px solid #34344c; z-index: 5; }
 .hub::after { content: ""; position: absolute; inset: 34px; border-radius: 50%; background: #0a0a12; border: 1px solid #2a2a3e; }
@@ -152,7 +157,7 @@ body { width: 1920px; height: 1080px; overflow: hidden; font-family: "Exo 2", sa
 #s4 .rotor { animation: spin .42s 22s linear infinite; }
 #s4 .rotor.ghost1 { animation: spin .42s 21.93s linear infinite; opacity: .4; }
 #s4 .rotor.ghost2 { animation: spin .42s 21.86s linear infinite; opacity: .2; }
-#s4 .rotor .blade { animation: bladefade 1.6s 23.4s ease both; }
+#s4 .rotor .xbar { animation: bladefade 1.6s 23.4s ease both; }
 @keyframes bladefade { from { opacity: 1 } to { opacity: .16 } }
 #s4 .disc { position: absolute; inset: 26px; border-radius: 50%; opacity: 0;
   background:
@@ -221,7 +226,7 @@ body { width: 1920px; height: 1080px; overflow: hidden; font-family: "Exo 2", sa
 #s7 .phone { left: 290px; top: 340px; width: 310px; animation: rise 1s 46.8s both; }
 #s7 .fanwrap { right: 260px; top: 365px; width: 540px; height: 540px; margin: 0; animation: rise 1s 47s both; }
 #s7 .rotor { animation: spin .42s 46s linear infinite; }
-#s7 .rotor .blade { opacity: .16; }
+#s7 .rotor .xbar { opacity: .16; }
 #s7 .disc { position: absolute; inset: 24px; border-radius: 50%;
   background: radial-gradient(closest-side, rgba(127,91,255,.10), rgba(0,224,255,.05) 60%, transparent 75%);
   animation: spin 5s 46s linear infinite; }
@@ -262,15 +267,13 @@ body { width: 1920px; height: 1080px; overflow: hidden; font-family: "Exo 2", sa
 #s8 .steps, #s8 .head, #s8 .noskill { animation-fill-mode: both; }
 #s8 .wrap1 { animation: fadeoutk .6s 59.4s ease both; }
 
-/* end card */
+/* end card — official animated wordmark still */
 #s8 .end { position: absolute; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center;
-  gap: 30px; opacity: 0; animation: scrswap .8s 60s ease both; }
-#s8 .end .logo { width: 330px; filter: drop-shadow(0 0 60px rgba(127,91,255,.55));
-  animation: logoin 1.4s 60s cubic-bezier(.16,.8,.3,1) both; }
-#s8 .end .word { font-size: 96px; font-weight: 700; letter-spacing: .42em; text-indent: .42em;
-  animation: rise .9s 60.5s both; }
+  gap: 8px; background: #000; opacity: 0; animation: scrswap .8s 60s ease both; }
+#s8 .end .endmark { width: 1300px; margin: -60px 0 -40px;
+  animation: logoin 1.6s 60s cubic-bezier(.16,.8,.3,1) both; }
 #s8 .end .tag { font-size: 38px; color: #cfcfe2; animation: rise .9s 60.9s both; }
-#s8 .end .url { font-size: 44px; font-weight: 700; letter-spacing: .14em; margin-top: 16px;
+#s8 .end .url { font-size: 46px; font-weight: 700; letter-spacing: .14em; margin-top: 18px;
   animation: rise .9s 61.4s both; }
 </style>
 </head>
@@ -308,21 +311,15 @@ body { width: 1920px; height: 1080px; overflow: hidden; font-family: "Exo 2", sa
       <div class="body l2"><b>Wi-Fi connected.</b> Mounts anywhere.</div>
     </div>
     <div class="fanwrap">
+      <span class="pole"></span>
       <div class="fan-ring"></div>
       <div class="rotor">
-        <div class="blade" style="transform:rotate(0deg)"><span class="leds">
-          <i style="background:#00e0ff;box-shadow:0 0 12px #00e0ff"></i><i style="background:#2e7cff;box-shadow:0 0 12px #2e7cff"></i><i style="background:#7f5bff;box-shadow:0 0 12px #7f5bff"></i><i style="background:#b44bff;box-shadow:0 0 12px #b44bff"></i><i style="background:#ff2dff;box-shadow:0 0 12px #ff2dff"></i><i style="background:#ff5a3c;box-shadow:0 0 12px #ff5a3c"></i><i style="background:#ff8a00;box-shadow:0 0 12px #ff8a00"></i>
-        </span></div>
-        <div class="blade" style="transform:rotate(120deg)"><span class="leds">
-          <i style="background:#00e0ff;box-shadow:0 0 12px #00e0ff"></i><i style="background:#2e7cff;box-shadow:0 0 12px #2e7cff"></i><i style="background:#7f5bff;box-shadow:0 0 12px #7f5bff"></i><i style="background:#b44bff;box-shadow:0 0 12px #b44bff"></i><i style="background:#ff2dff;box-shadow:0 0 12px #ff2dff"></i><i style="background:#ff5a3c;box-shadow:0 0 12px #ff5a3c"></i><i style="background:#ff8a00;box-shadow:0 0 12px #ff8a00"></i>
-        </span></div>
-        <div class="blade" style="transform:rotate(240deg)"><span class="leds">
-          <i style="background:#00e0ff;box-shadow:0 0 12px #00e0ff"></i><i style="background:#2e7cff;box-shadow:0 0 12px #2e7cff"></i><i style="background:#7f5bff;box-shadow:0 0 12px #7f5bff"></i><i style="background:#b44bff;box-shadow:0 0 12px #b44bff"></i><i style="background:#ff2dff;box-shadow:0 0 12px #ff2dff"></i><i style="background:#ff5a3c;box-shadow:0 0 12px #ff5a3c"></i><i style="background:#ff8a00;box-shadow:0 0 12px #ff8a00"></i>
-        </span></div>
+        <div class="xbar a"></div>
+        <div class="xbar b"></div>
       </div>
       <div class="hub"></div>
     </div>
-    <div class="callout c1"><div><b>LED blades</b><small>thousands of flashes per second</small></div><span class="ln"></span></div>
+    <div class="callout c1"><div><b>X-rotor LED blades</b><small>thousands of flashes per second</small></div><span class="ln"></span></div>
     <div class="callout c2"><div><b>Silent motor</b><small>700+ RPM, rock steady</small></div><span class="ln"></span></div>
     <div class="callout c3"><div><b>Wi-Fi module</b><small>talks to the Holofex app</small></div><span class="ln"></span></div>
   </div></section>
@@ -337,9 +334,9 @@ body { width: 1920px; height: 1080px; overflow: hidden; font-family: "Exo 2", sa
     </div>
     <div class="fanwrap">
       <div class="fan-ring"></div>
-      <div class="rotor ghost2"><div class="blade" style="transform:rotate(0deg)"></div><div class="blade" style="transform:rotate(120deg)"></div><div class="blade" style="transform:rotate(240deg)"></div></div>
-      <div class="rotor ghost1"><div class="blade" style="transform:rotate(0deg)"></div><div class="blade" style="transform:rotate(120deg)"></div><div class="blade" style="transform:rotate(240deg)"></div></div>
-      <div class="rotor"><div class="blade" style="transform:rotate(0deg)"></div><div class="blade" style="transform:rotate(120deg)"></div><div class="blade" style="transform:rotate(240deg)"></div></div>
+      <div class="rotor ghost2"><div class="xbar a"></div><div class="xbar b"></div></div>
+      <div class="rotor ghost1"><div class="xbar a"></div><div class="xbar b"></div></div>
+      <div class="rotor"><div class="xbar a"></div><div class="xbar b"></div></div>
       <div class="disc"></div>
       <img class="cast-logo" src="assets/logo.svg" />
       <div class="hub"></div>
@@ -393,7 +390,7 @@ body { width: 1920px; height: 1080px; overflow: hidden; font-family: "Exo 2", sa
     <div class="wave w1"></div><div class="wave w2"></div><div class="wave w3"></div>
     <div class="fanwrap">
       <div class="fan-ring"></div>
-      <div class="rotor"><div class="blade" style="transform:rotate(0deg)"></div><div class="blade" style="transform:rotate(120deg)"></div><div class="blade" style="transform:rotate(240deg)"></div></div>
+      <div class="rotor"><div class="xbar a"></div><div class="xbar b"></div></div>
       <div class="disc"></div>
       <img class="cast-logo" src="assets/logo.svg" />
       <div class="hub"></div>
@@ -416,8 +413,7 @@ body { width: 1920px; height: 1080px; overflow: hidden; font-family: "Exo 2", sa
       <div class="noskill"><b>No design skills needed.</b> From idea to hologram in minutes.</div>
     </div>
     <div class="end">
-      <img class="logo" src="assets/logo.svg" />
-      <div class="word">HOL<span class="g">O</span>FEX</div>
+      <img class="endmark" src="assets/endcard.jpg" />
       <div class="tag">Bringing content to life in stunning <span class="g">3D</span></div>
       <div class="url g">holofex.studio</div>
     </div>
