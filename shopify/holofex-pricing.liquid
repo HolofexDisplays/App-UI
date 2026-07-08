@@ -217,12 +217,58 @@
 .hfx-pr-light .hfx-pr-card { box-shadow: 0 14px 44px rgba(12, 12, 26, 0.16); }
 .hfx-pr-light .hfx-pr-card:hover { box-shadow: 0 22px 60px rgba(12, 12, 26, 0.22), 0 0 44px color-mix(in srgb, var(--acc) 26%, transparent); }
 
+/* ---------- swipe dots (mobile only) ---------- */
+.hfx-pr-swipe { display: none; }
+
 /* ---------- responsive ---------- */
 @media (max-width: 1080px) {
   .hfx-pr-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
 }
 @media (max-width: 720px) {
-  .hfx-pr-grid { grid-template-columns: minmax(0, 1fr); max-width: 440px; margin: 0 auto; }
+  /* plans become a swipeable sliding bar; the strip nudges sideways
+     once on load to hint that it scrolls */
+  .hfx-pr-grid {
+    display: flex;
+    gap: 14px;
+    overflow-x: auto;
+    margin: 0 -20px;
+    padding: 16px 20px 8px;
+    scroll-snap-type: x mandatory;
+    scroll-padding-left: 20px;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
+    -webkit-mask-image: linear-gradient(90deg, transparent, #000 16px, #000 calc(100% - 34px), transparent);
+            mask-image: linear-gradient(90deg, transparent, #000 16px, #000 calc(100% - 34px), transparent);
+    animation: hfx-pr-nudge 1.1s ease-in-out 1.2s 2;
+  }
+  .hfx-pr-grid::-webkit-scrollbar { display: none; }
+  .hfx-pr-card { flex: 0 0 85%; scroll-snap-align: start; }
+
+  @keyframes hfx-pr-nudge {
+    0%, 100% { transform: none; }
+    45%      { transform: translateX(-18px); }
+  }
+
+  .hfx-pr-swipe {
+    display: flex;
+    justify-content: center;
+    gap: 8px;
+    margin-top: 16px;
+  }
+  .hfx-pr-dot {
+    width: 8px; height: 8px;
+    border-radius: 999px;
+    border: 0; padding: 0;
+    background: rgba(255, 255, 255, 0.22);
+    cursor: pointer;
+    transition: width 0.25s ease, background 0.25s ease, box-shadow 0.25s ease;
+  }
+  .hfx-pr-dot.hfx-on {
+    width: 22px;
+    background: linear-gradient(90deg, var(--purple), var(--magenta));
+    box-shadow: 0 0 10px rgba(255, 45, 255, 0.5);
+  }
+  .hfx-pr-light .hfx-pr-dot { background: rgba(12, 12, 26, 0.18); }
 }
 
 @media (prefers-reduced-motion: reduce) {
@@ -231,6 +277,7 @@
 </style>
 
 {%- liquid
+  assign pr_uid = section.id
   assign pr_bgc = section.settings.background_color | default: '#000000'
   assign pr_bgc_str = pr_bgc | append: ''
   if pr_bgc_str == blank or pr_bgc_str == 'rgba(0,0,0,0)'
@@ -257,7 +304,7 @@
       {%- endif -%}
     </div>
 
-    <div class="hfx-pr-grid">
+    <div class="hfx-pr-grid" id="hfx-pr-track-{{ pr_uid }}">
       {%- for block in section.blocks -%}
         <article
           class="hfx-pr-card hfx-pr-a-{{ block.settings.accent }}{% if block.settings.highlight %} hfx-pr-hot{% endif %}"
@@ -304,11 +351,51 @@
       {%- endfor -%}
     </div>
 
+    {%- if section.blocks.size > 1 -%}
+      <div class="hfx-pr-swipe" id="hfx-pr-swipe-{{ pr_uid }}" aria-hidden="true">
+        {%- for block in section.blocks -%}
+          <button type="button" class="hfx-pr-dot{% if forloop.first %} hfx-on{% endif %}" aria-label="Go to plan {{ forloop.index }}" tabindex="-1"></button>
+        {%- endfor -%}
+      </div>
+    {%- endif -%}
+
     {%- if section.settings.footnote != blank -%}
       <p class="hfx-pr-note">{{ section.settings.footnote }}</p>
     {%- endif -%}
   </div>
 </section>
+
+{%- if section.blocks.size > 1 -%}
+<script>
+(function () {
+  var track = document.getElementById('hfx-pr-track-{{ pr_uid }}');
+  var wrap = document.getElementById('hfx-pr-swipe-{{ pr_uid }}');
+  if (!track || !wrap) return;
+  var dots = wrap.querySelectorAll('.hfx-pr-dot');
+
+  function step() {
+    var card = track.children[0];
+    return card ? card.offsetWidth + 14 : 1;
+  }
+  function update() {
+    var i = Math.round(track.scrollLeft / step());
+    i = Math.max(0, Math.min(dots.length - 1, i));
+    for (var d = 0; d < dots.length; d++) dots[d].classList.toggle('hfx-on', d === i);
+  }
+
+  // stop the nudge hint the moment the user interacts
+  function settle() { track.style.animation = 'none'; }
+  track.addEventListener('touchstart', settle, { passive: true, once: true });
+  track.addEventListener('scroll', function () { settle(); update(); }, { passive: true });
+
+  for (var d = 0; d < dots.length; d++) (function (i) {
+    dots[i].addEventListener('click', function () {
+      track.scrollTo({ left: i * step(), behavior: 'smooth' });
+    });
+  })(d);
+})();
+</script>
+{%- endif -%}
 
 {% schema %}
 {
