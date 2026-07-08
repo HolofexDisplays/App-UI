@@ -46,7 +46,7 @@
   --text-dim: #9a9ab4;
 
   position: relative;
-  background: #000;
+  background: var(--hfx-tw-bgc, #f5f5f5);
   color: var(--text);
   font-family: "Exo 2", system-ui, sans-serif;
   -webkit-font-smoothing: antialiased;
@@ -62,8 +62,20 @@
   background:
     radial-gradient(42% 50% at 10% 0%,   rgba(127, 91, 255, 0.12), transparent 65%),
     radial-gradient(40% 46% at 90% 100%, rgba(255, 138, 0, 0.08),  transparent 65%),
-    radial-gradient(36% 42% at 85% 0%,   rgba(46, 124, 255, 0.09), transparent 65%),
-    #000;
+    radial-gradient(36% 42% at 85% 0%,   rgba(46, 124, 255, 0.09), transparent 65%);
+}
+
+/* ---------- light-background mode (auto when the picked colour is light) ---------- */
+.hfx-tw-light .hfx-tw-bg { opacity: 0.45; }
+.hfx-tw-light .hfx-tw-title { color: #0d0d16; }
+.hfx-tw-light .hfx-tw-sub { color: #5c5c72; }
+.hfx-tw-light .hfx-tw-card {
+  border-color: color-mix(in srgb, var(--acc) 38%, transparent);
+  box-shadow: 0 14px 44px rgba(12, 12, 26, 0.16);
+}
+.hfx-tw-light .hfx-tw-card:hover {
+  border-color: color-mix(in srgb, var(--acc) 62%, transparent);
+  box-shadow: 0 22px 60px rgba(12, 12, 26, 0.22), 0 0 44px color-mix(in srgb, var(--acc) 26%, transparent);
 }
 
 .hfx-tw-inner { max-width: var(--hfx-tw-max-w, 1280px); margin: 0 auto; }
@@ -375,7 +387,20 @@
   </defs>
 </svg>
 
-<section class="hfx-tw" style="--hfx-tw-max-w: {{ section.settings.max_width | default: 1280 }}px;">
+{%- liquid
+  assign tw_bgc = section.settings.background_color | default: '#F5F5F5'
+  assign tw_bgc_str = tw_bgc | append: ''
+  if tw_bgc_str == blank or tw_bgc_str == 'rgba(0,0,0,0)'
+    assign tw_bgc = '#F5F5F5'
+  endif
+  assign tw_bright = tw_bgc | color_brightness | default: 245
+  if tw_bright > 140
+    assign tw_mode = 'hfx-tw-light'
+  else
+    assign tw_mode = ''
+  endif
+-%}
+<section class="hfx-tw {{ tw_mode }}" style="--hfx-tw-max-w: {{ section.settings.max_width | default: 1280 }}px; --hfx-tw-bgc: {{ tw_bgc }};">
   <div class="hfx-tw-bg" aria-hidden="true"></div>
 
   <div class="hfx-tw-inner">
@@ -474,6 +499,13 @@
       "id": "subheading",
       "label": "Subheading",
       "default": "Choose the method that works best for your vision."
+    },
+    {
+      "type": "color",
+      "id": "background_color",
+      "label": "Background colour",
+      "default": "#F5F5F5",
+      "info": "Heading text flips automatically between dark and light to stay readable."
     },
     {
       "type": "range",
