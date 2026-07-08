@@ -681,21 +681,37 @@ h1 .w-display  { background-image: linear-gradient(100deg, var(--magenta), #ff5a
 }
 
 @media (max-width: 1080px) {
-  .hero-inner { grid-template-columns: minmax(0, 1fr); padding-top: 120px; }
-  .copy { max-width: 640px; }
-  .scene-wrap { justify-content: center; }
+  .hero-inner {
+    grid-template-columns: minmax(0, 1fr);
+    padding-top: 120px;
+    gap: 0;
+    max-width: 688px;
+  }
+
+  /* Stack order on mobile: heading first, then the pipeline scene,
+     then the supporting copy, buttons and features. */
+  .copy { display: contents; }
+  .brand-lockup { order: 1; }
+  .tagline      { order: 2; justify-self: start; }
+  h1            { order: 3; }
+  .scene-wrap   { order: 4; justify-content: center; margin: 4px 0 34px; }
+  .lede         { order: 5; }
+  .cta-row      { order: 6; }
+  .features     { order: 7; }
+  .footnote     { order: 8; }
+
   .scene { transform: none; height: 700px; }
 }
 
 @media (max-width: 700px) {
   .nav-links { display: none; }
-  .scene { transform: scale(0.72); transform-origin: top center; height: 520px; }
+  .scene { transform: scale(0.72); transform-origin: top center; height: 440px; }
   .cta-row .btn { flex: 1 1 100%; justify-content: center; }
 }
 
 @media (max-width: 480px) {
   .features { grid-template-columns: 1fr; }
-  .scene { transform: scale(0.55); height: 400px; }
+  .scene { transform: scale(0.55); height: 335px; }
   .scroll-cue { display: none; }
 }
 
