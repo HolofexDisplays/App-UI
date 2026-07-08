@@ -339,12 +339,71 @@
 }
 .hfx-tw-btn:hover svg { transform: translateY(-50%) translateX(3px); }
 
+/* ---------- swipe indicator (mobile only) ---------- */
+.hfx-tw-swipe { display: none; }
+
 /* ---------- responsive ---------- */
 @media (max-width: 1080px) {
   .hfx-tw-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
 }
 @media (max-width: 720px) {
-  .hfx-tw-grid { grid-template-columns: minmax(0, 1fr); max-width: 460px; margin: 0 auto; }
+  /* cards become a swipeable sliding bar with the next card peeking in */
+  .hfx-tw-grid {
+    display: flex;
+    gap: 14px;
+    overflow-x: auto;
+    margin: 0 -20px;
+    padding: 4px 20px 8px;
+    scroll-snap-type: x mandatory;
+    scroll-padding-left: 20px;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
+    -webkit-mask-image: linear-gradient(90deg, transparent, #000 16px, #000 calc(100% - 34px), transparent);
+            mask-image: linear-gradient(90deg, transparent, #000 16px, #000 calc(100% - 34px), transparent);
+  }
+  .hfx-tw-grid::-webkit-scrollbar { display: none; }
+  .hfx-tw-card { flex: 0 0 85%; scroll-snap-align: start; }
+
+  .hfx-tw-swipe {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 11px;
+    margin-top: 18px;
+  }
+  .hfx-tw-dots { display: flex; gap: 8px; }
+  .hfx-tw-dot {
+    width: 8px; height: 8px;
+    border-radius: 999px;
+    border: 0; padding: 0;
+    background: rgba(255, 255, 255, 0.22);
+    cursor: pointer;
+    transition: width 0.25s ease, background 0.25s ease, box-shadow 0.25s ease;
+  }
+  .hfx-tw-dot.hfx-on {
+    width: 22px;
+    background: linear-gradient(90deg, var(--purple), var(--magenta));
+    box-shadow: 0 0 10px rgba(255, 45, 255, 0.5);
+  }
+  .hfx-tw-hint {
+    display: inline-flex;
+    align-items: center;
+    gap: 7px;
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 0.3em;
+    text-transform: uppercase;
+    color: var(--text-dim);
+    transition: opacity 0.4s ease;
+  }
+  .hfx-tw-hint svg { width: 14px; height: 14px; animation: hfx-tw-nudge 1.4s ease-in-out infinite; }
+  .hfx-tw-hint.hfx-hide { opacity: 0; }
+  @keyframes hfx-tw-nudge {
+    0%, 100% { transform: translateX(0); }
+    50%      { transform: translateX(5px); }
+  }
+  .hfx-tw-light .hfx-tw-dot { background: rgba(12, 12, 26, 0.18); }
+  .hfx-tw-light .hfx-tw-hint { color: #6a6a82; }
 }
 
 @media (prefers-reduced-motion: reduce) {
@@ -414,7 +473,7 @@
       {%- endif -%}
     </div>
 
-    <div class="hfx-tw-grid">
+    <div class="hfx-tw-grid" id="hfx-tw-track-{{ uid }}">
       {%- for block in section.blocks -%}
         <article class="hfx-tw-card hfx-tw-a-{{ block.settings.accent }}" {{ block.shopify_attributes }}>
 
@@ -479,8 +538,56 @@
         </article>
       {%- endfor -%}
     </div>
+
+    {%- if section.blocks.size > 1 -%}
+      <div class="hfx-tw-swipe" id="hfx-tw-swipe-{{ uid }}" aria-hidden="true">
+        <div class="hfx-tw-dots">
+          {%- for block in section.blocks -%}
+            <button type="button" class="hfx-tw-dot{% if forloop.first %} hfx-on{% endif %}" data-i="{{ forloop.index0 }}" aria-label="Go to card {{ forloop.index }}" tabindex="-1"></button>
+          {%- endfor -%}
+        </div>
+        <span class="hfx-tw-hint">
+          {{ section.settings.swipe_hint | default: 'Swipe to explore' }}
+          <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2 8h11M9.5 4.5 13 8l-3.5 3.5"/></svg>
+        </span>
+      </div>
+    {%- endif -%}
   </div>
 </section>
+
+{%- if section.blocks.size > 1 -%}
+<script>
+(function () {
+  var track = document.getElementById('hfx-tw-track-{{ uid }}');
+  var wrap = document.getElementById('hfx-tw-swipe-{{ uid }}');
+  if (!track || !wrap) return;
+  var dots = wrap.querySelectorAll('.hfx-tw-dot');
+  var hint = wrap.querySelector('.hfx-tw-hint');
+  var scrolled = false;
+
+  function step() {
+    var card = track.children[0];
+    return card ? card.offsetWidth + 14 : 1;
+  }
+  function update() {
+    var i = Math.round(track.scrollLeft / step());
+    i = Math.max(0, Math.min(dots.length - 1, i));
+    for (var d = 0; d < dots.length; d++) dots[d].classList.toggle('hfx-on', d === i);
+  }
+
+  track.addEventListener('scroll', function () {
+    if (!scrolled) { scrolled = true; if (hint) hint.classList.add('hfx-hide'); }
+    update();
+  }, { passive: true });
+
+  for (var d = 0; d < dots.length; d++) (function (i) {
+    dots[i].addEventListener('click', function () {
+      track.scrollTo({ left: i * step(), behavior: 'smooth' });
+    });
+  })(d);
+})();
+</script>
+{%- endif -%}
 
 {% schema %}
 {
@@ -506,6 +613,13 @@
       "label": "Background colour",
       "default": "#F5F5F5",
       "info": "Heading text flips automatically between dark and light to stay readable."
+    },
+    {
+      "type": "text",
+      "id": "swipe_hint",
+      "label": "Mobile swipe hint",
+      "default": "Swipe to explore",
+      "info": "Shown under the cards on mobile, fades out after the first swipe."
     },
     {
       "type": "range",
