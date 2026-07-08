@@ -675,10 +675,28 @@
 @media (max-width: 700px) {
   .hfx-scene { transform: scale(0.72); transform-origin: top center; height: 440px; }
   .hfx-cta-row .hfx-btn { flex: 1 1 100%; justify-content: center; }
+
+  /* feature tiles become a swipeable sliding bar */
+  .hfx-features {
+    display: flex;
+    max-width: none;
+    gap: 12px;
+    overflow-x: auto;
+    margin-left: -24px;
+    margin-right: -24px;
+    padding: 4px 24px 12px;
+    scroll-snap-type: x mandatory;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
+    -webkit-mask-image: linear-gradient(90deg, transparent, #000 22px, #000 calc(100% - 48px), transparent);
+            mask-image: linear-gradient(90deg, transparent, #000 22px, #000 calc(100% - 48px), transparent);
+  }
+  .hfx-features::-webkit-scrollbar { display: none; }
+  .hfx-feature { flex: none; scroll-snap-align: start; }
+  .hfx-feature strong { white-space: nowrap; }
 }
 
 @media (max-width: 480px) {
-  .hfx-features { grid-template-columns: 1fr; }
   .hfx-scene { transform: scale(0.55); height: 335px; }
 }
 

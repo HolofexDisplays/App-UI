@@ -707,10 +707,28 @@ h1 .w-display  { background-image: linear-gradient(100deg, var(--magenta), #ff5a
   .nav-links { display: none; }
   .scene { transform: scale(0.72); transform-origin: top center; height: 440px; }
   .cta-row .btn { flex: 1 1 100%; justify-content: center; }
+
+  /* feature tiles become a swipeable sliding bar */
+  .features {
+    display: flex;
+    max-width: none;
+    gap: 12px;
+    overflow-x: auto;
+    margin-left: -20px;
+    margin-right: -20px;
+    padding: 4px 20px 12px;
+    scroll-snap-type: x mandatory;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
+    -webkit-mask-image: linear-gradient(90deg, transparent, #000 18px, #000 calc(100% - 48px), transparent);
+            mask-image: linear-gradient(90deg, transparent, #000 18px, #000 calc(100% - 48px), transparent);
+  }
+  .features::-webkit-scrollbar { display: none; }
+  .feature { flex: none; scroll-snap-align: start; }
+  .feature strong { white-space: nowrap; }
 }
 
 @media (max-width: 480px) {
-  .features { grid-template-columns: 1fr; }
   .scene { transform: scale(0.55); height: 335px; }
   .scroll-cue { display: none; }
 }
