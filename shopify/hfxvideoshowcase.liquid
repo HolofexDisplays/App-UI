@@ -1,0 +1,683 @@
+{% comment %}
+  ============================================================
+  HOLOFEX — VIDEO SHOWCASE (HOMEPAGE PREMIUM)
+  Autoplay video + key points, built to sit right under the
+  hero. Not a plain video-and-text block:
+
+  • Video framed by a slowly ROTATING SPECTRUM BORDER with a
+    breathing neon glow, plus animated corner brackets and a
+    mono HUD pill — the "premium holographic device" look.
+  • 3D CURSOR TILT — the whole video frame tilts subtly toward
+    the mouse (desktop only, reduced-motion safe).
+  • CHAPTERS — each key point can carry a timestamp. Clicking
+    a point seeks the video; as the video plays, the matching
+    point lights up automatically. No timestamps? Points
+    auto-cycle instead.
+  • Seekable spectrum progress bar + sound toggle.
+  • COUNT-UP STATS — numbers animate up when scrolled into view.
+
+  Video autoplays muted + loops (required by browsers for
+  autoplay). Use the Shopify video picker OR a direct .mp4 URL.
+
+  Install: upload to /sections, add "Video Showcase (Premium)".
+  ============================================================
+{% endcomment %}
+
+{{ 'https://fonts.googleapis.com/css2?family=Exo+2:wght@400;600;700;800&family=JetBrains+Mono:wght@400;700&display=swap' | stylesheet_tag }}
+
+{%- assign sid = section.id -%}
+{%- liquid
+  if section.settings.theme == 'light'
+    assign c_cardbg = '#FFFFFF'
+    assign c_ink = '#0E1320'
+    assign c_muted = '#4A5266'
+    assign c_soft = '#9AA1B5'
+    assign c_line = '#DCE3EF'
+    assign c_accent = '#2D7DFF'
+    assign c_hoverbg = 'rgba(14,19,32,.03)'
+    assign glow_rest = '0 0 34px rgba(127,91,255,.16), 0 0 80px rgba(0,224,255,.08), 0 24px 48px rgba(14,19,32,.16)'
+    assign glow_peak = '0 0 48px rgba(127,91,255,.26), 0 0 110px rgba(0,224,255,.13), 0 24px 48px rgba(14,19,32,.16)'
+  else
+    assign c_cardbg = '#05060A'
+    assign c_ink = '#FFFFFF'
+    assign c_muted = '#C7CCDB'
+    assign c_soft = '#7A8194'
+    assign c_line = '#1E2331'
+    assign c_accent = '#00E0FF'
+    assign c_hoverbg = 'rgba(255,255,255,.03)'
+    assign glow_rest = '0 0 44px rgba(127,91,255,.28), 0 0 120px rgba(0,224,255,.10), 0 30px 60px rgba(0,0,0,.5)'
+    assign glow_peak = '0 0 64px rgba(127,91,255,.42), 0 0 150px rgba(0,224,255,.18), 0 30px 60px rgba(0,0,0,.5)'
+  endif
+-%}
+
+<section class="hfx-vs" id="hfx-vs-{{ sid }}"
+  style="--pt: {{ section.settings.padding_top }}px; --pb: {{ section.settings.padding_bottom }}px;">
+  <div class="hfx-vs__card{% if section.settings.flip %} hfx-vs__card--flip{% endif %}">
+    <div class="hfx-vs__scene" aria-hidden="true"></div>
+
+    <!-- ================= VIDEO ================= -->
+    <div class="hfx-vs__media hfx-vs__reveal">
+      <div class="hfx-vs__tilt" data-hfx-tilt>
+        <div class="hfx-vs__frame">
+          <div class="hfx-vs__screen{% if section.settings.external_video != blank and section.settings.external_video.type == 'vimeo' %} hfx-vs__screen--bg-embed{% endif %}">
+            {%- if section.settings.external_video != blank -%}
+              {%- assign xv = section.settings.external_video -%}
+              {%- if xv.type == 'youtube' -%}
+                <iframe class="hfx-vs__embed" data-hfx-yt="{{ xv.id }}"
+                  src="https://www.youtube.com/embed/{{ xv.id }}?autoplay=1&mute=1&loop=1&playlist={{ xv.id }}&controls=0&playsinline=1&rel=0&modestbranding=1&enablejsapi=1"
+                  title="Video showcase" frameborder="0"
+                  allow="autoplay; encrypted-media; picture-in-picture" allowfullscreen></iframe>
+              {%- else -%}
+                <iframe class="hfx-vs__embed"
+                  src="https://player.vimeo.com/video/{{ xv.id }}?background=1&autoplay=1&loop=1&muted=1"
+                  title="Video showcase" frameborder="0"
+                  allow="autoplay; fullscreen; picture-in-picture"></iframe>
+              {%- endif -%}
+            {%- elsif section.settings.video != blank -%}
+              {{ section.settings.video | video_tag: image_size: '1200x', autoplay: true, loop: true, muted: true, playsinline: true, controls: false, class: 'hfx-vs__video' }}
+            {%- elsif section.settings.video_url != blank -%}
+              <video class="hfx-vs__video" src="{{ section.settings.video_url }}"
+                {% if section.settings.poster != blank %}poster="{{ section.settings.poster | image_url: width: 1200 }}"{% endif %}
+                autoplay loop muted playsinline></video>
+            {%- else -%}
+              <div class="hfx-vs__novideo">
+                <span>ADD A VIDEO IN THE THEME EDITOR</span>
+              </div>
+            {%- endif -%}
+
+            <!-- HUD -->
+            <span class="hfx-vs__corner hfx-vs__corner--tl" aria-hidden="true"></span>
+            <span class="hfx-vs__corner hfx-vs__corner--tr" aria-hidden="true"></span>
+            <span class="hfx-vs__corner hfx-vs__corner--bl" aria-hidden="true"></span>
+            <span class="hfx-vs__corner hfx-vs__corner--br" aria-hidden="true"></span>
+            {%- if section.settings.hud_text != blank -%}
+              <span class="hfx-vs__hud"><span class="hfx-vs__hud-dot"></span>{{ section.settings.hud_text | escape }}</span>
+            {%- endif -%}
+            <button type="button" class="hfx-vs__sound" data-hfx-sound aria-label="Toggle sound">
+              <svg class="hfx-vs__ico-muted" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M11 4.702a.705.705 0 0 0-1.203-.498L6.413 7.587A1.4 1.4 0 0 1 5.416 8H3a1 1 0 0 0-1 1v6a1 1 0 0 0 1 1h2.416a1.4 1.4 0 0 1 .997.413l3.383 3.384A.705.705 0 0 0 11 19.298z"/><line x1="22" x2="16" y1="9" y2="15"/><line x1="16" x2="22" y1="9" y2="15"/></svg>
+              <svg class="hfx-vs__ico-sound" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M11 4.702a.705.705 0 0 0-1.203-.498L6.413 7.587A1.4 1.4 0 0 1 5.416 8H3a1 1 0 0 0-1 1v6a1 1 0 0 0 1 1h2.416a1.4 1.4 0 0 1 .997.413l3.383 3.384A.705.705 0 0 0 11 19.298z"/><path d="M16 9a5 5 0 0 1 0 6"/><path d="M19.364 18.364a9 9 0 0 0 0-12.728"/></svg>
+            </button>
+            <!-- seekable progress -->
+            <div class="hfx-vs__progress" data-hfx-progress role="slider" aria-label="Video progress" tabindex="0">
+              <span class="hfx-vs__progress-fill" data-hfx-progressfill></span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ================= COPY ================= -->
+    <div class="hfx-vs__copy">
+      {%- if section.settings.eyebrow != blank -%}
+        <p class="hfx-vs__eyebrow hfx-vs__reveal">{{ section.settings.eyebrow | escape }}</p>
+      {%- endif -%}
+      <h2 class="hfx-vs__heading hfx-vs__reveal">
+        {{ section.settings.heading | escape }}
+        {%- if section.settings.heading_grad != blank %}
+          <span class="hfx-vs__heading-grad">{{ section.settings.heading_grad | escape }}</span>
+        {%- endif -%}
+      </h2>
+      {%- if section.settings.subtext != blank -%}
+        <p class="hfx-vs__sub hfx-vs__reveal">{{ section.settings.subtext | escape }}</p>
+      {%- endif -%}
+
+      <div class="hfx-vs__points hfx-vs__reveal" data-hfx-points>
+        {%- for block in section.blocks -%}
+          <button type="button" class="hfx-vs__point{% if forloop.first %} is-active{% endif %}"
+            data-hfx-point data-time="{{ block.settings.time }}" {{ block.shopify_attributes }}>
+            <span class="hfx-vs__point-bar" aria-hidden="true"></span>
+            <span class="hfx-vs__point-body">
+              <span class="hfx-vs__point-title">{{ block.settings.title | escape }}</span>
+              <span class="hfx-vs__point-text">{{ block.settings.text | escape }}</span>
+            </span>
+            {%- if block.settings.time > 0 or block.settings.time == 0 -%}
+              <span class="hfx-vs__point-time" aria-hidden="true">{{ block.settings.time | divided_by: 60 }}:{{ block.settings.time | modulo: 60 | prepend: '00' | slice: -2, 2 }}</span>
+            {%- endif -%}
+          </button>
+        {%- endfor -%}
+      </div>
+
+      {%- if section.settings.btn_label != blank -%}
+        <a class="hfx-vs__btn hfx-vs__reveal" href="{{ section.settings.btn_link | default: '#' }}">
+          {{ section.settings.btn_label | escape }}
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg>
+        </a>
+      {%- endif -%}
+
+      <div class="hfx-vs__stats hfx-vs__reveal">
+        <div class="hfx-vs__stat"><strong data-hfx-count="{{ section.settings.stat1_value | escape }}">0</strong><span>{{ section.settings.stat1_label | escape }}</span></div>
+        <div class="hfx-vs__stat"><strong data-hfx-count="{{ section.settings.stat2_value | escape }}">0</strong><span>{{ section.settings.stat2_label | escape }}</span></div>
+        <div class="hfx-vs__stat"><strong data-hfx-count="{{ section.settings.stat3_value | escape }}">0</strong><span>{{ section.settings.stat3_label | escape }}</span></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+{% style %}
+#hfx-vs-{{ sid }}{
+  padding: var(--pt) 20px var(--pb);
+  font-family:'Exo 2', system-ui, sans-serif;
+}
+#hfx-vs-{{ sid }} *{ box-sizing:border-box; margin:0; }
+#hfx-vs-{{ sid }} .hfx-vs__card{
+  position:relative; overflow:hidden;
+  max-width:1400px; margin:0 auto;
+  background:{{ c_cardbg }}; border-radius:28px;
+  {% if section.settings.theme == 'light' %}border:1px solid #DCE3EF; box-shadow:0 8px 40px rgba(14,19,32,.06);{% endif %}
+  display:grid; grid-template-columns:minmax(0,1.08fr) minmax(0,1fr);
+  gap:clamp(30px,4vw,60px); align-items:center;
+  padding:clamp(32px,4.5vw,64px);
+}
+#hfx-vs-{{ sid }} .hfx-vs__card--flip .hfx-vs__media{ order:2; }
+#hfx-vs-{{ sid }} .hfx-vs__scene{
+  position:absolute; inset:0; pointer-events:none;
+  {% if section.settings.theme == 'light' %}
+  background:
+    radial-gradient(620px 460px at 28% 40%, rgba(127,91,255,.05), transparent 62%),
+    radial-gradient(480px 380px at 80% 70%, rgba(0,224,255,.04), transparent 60%);
+  {% else %}
+  background:
+    radial-gradient(620px 460px at 28% 40%, rgba(127,91,255,.13), transparent 62%),
+    radial-gradient(480px 380px at 80% 70%, rgba(0,224,255,.07), transparent 60%),
+    radial-gradient(380px 280px at 90% 15%, rgba(255,45,255,.06), transparent 65%);
+  {% endif %}
+}
+
+/* ---------- video frame ---------- */
+#hfx-vs-{{ sid }} .hfx-vs__media{ position:relative; z-index:1; }
+#hfx-vs-{{ sid }} .hfx-vs__tilt{ perspective:1100px; }
+#hfx-vs-{{ sid }} .hfx-vs__frame{
+  position:relative; border-radius:24px; padding:2px; overflow:hidden;
+  transform-style:preserve-3d;
+  transition:transform .35s cubic-bezier(.22,1,.36,1), box-shadow .35s;
+  box-shadow:{{ glow_rest }};
+  animation:hfxvsBreathe-{{ sid }} 5s ease-in-out infinite;
+}
+@keyframes hfxvsBreathe-{{ sid }}{
+  0%,100%{ box-shadow:{{ glow_rest }}; }
+  50%{ box-shadow:{{ glow_peak }}; }
+}
+#hfx-vs-{{ sid }} .hfx-vs__frame::before{
+  content:""; position:absolute; left:50%; top:50%;
+  width:220%; aspect-ratio:1;
+  transform:translate(-50%,-50%) rotate(0deg);
+  background:conic-gradient(#00E0FF, #7F5BFF, #FF2DFF, #FF8A00, #00E0FF);
+  animation:hfxvsSpin-{{ sid }} 7s linear infinite;
+}
+@keyframes hfxvsSpin-{{ sid }}{ to{ transform:translate(-50%,-50%) rotate(360deg); } }
+#hfx-vs-{{ sid }} .hfx-vs__screen{
+  position:relative; border-radius:22px; overflow:hidden; background:#000;
+  aspect-ratio:16/10;
+}
+#hfx-vs-{{ sid }} .hfx-vs__video,
+#hfx-vs-{{ sid }} .hfx-vs__screen video{
+  position:absolute; inset:0; width:100%; height:100%; object-fit:cover; display:block;
+}
+#hfx-vs-{{ sid }} .hfx-vs__novideo{
+  position:absolute; inset:0; display:flex; align-items:center; justify-content:center;
+  background:radial-gradient(90% 70% at 50% 40%, rgba(127,91,255,.3), transparent 60%), #07080D;
+  font-family:'JetBrains Mono',monospace; font-size:11px; letter-spacing:.3em; color:#5C6376;
+}
+
+/* YouTube/Vimeo iframe: kept 16:9 and oversized to cover the 16:10
+   screen (iframes can't object-fit); pointer-events off so the tilt
+   and the custom controls keep working */
+#hfx-vs-{{ sid }} .hfx-vs__embed{
+  position:absolute; left:50%; top:50%;
+  width:112.5%; aspect-ratio:16/9; height:auto;
+  transform:translate(-50%,-50%);
+  border:0; pointer-events:none;
+}
+#hfx-vs-{{ sid }} .hfx-vs__screen--bg-embed .hfx-vs__sound,
+#hfx-vs-{{ sid }} .hfx-vs__screen--bg-embed .hfx-vs__progress{ display:none; }
+
+/* HUD */
+#hfx-vs-{{ sid }} .hfx-vs__corner{
+  position:absolute; width:20px; height:20px; z-index:3; opacity:.85;
+  border:2px solid #00E0FF;
+  animation:hfxvsPulse-{{ sid }} 2.4s ease-in-out infinite;
+}
+@keyframes hfxvsPulse-{{ sid }}{ 0%,100%{ opacity:.85; } 50%{ opacity:.3; } }
+#hfx-vs-{{ sid }} .hfx-vs__corner--tl{ top:12px; left:12px; border-right:0; border-bottom:0; border-radius:6px 0 0 0; }
+#hfx-vs-{{ sid }} .hfx-vs__corner--tr{ top:12px; right:12px; border-left:0; border-bottom:0; border-radius:0 6px 0 0; animation-delay:.3s; }
+#hfx-vs-{{ sid }} .hfx-vs__corner--bl{ bottom:12px; left:12px; border-right:0; border-top:0; border-radius:0 0 0 6px; animation-delay:.6s; }
+#hfx-vs-{{ sid }} .hfx-vs__corner--br{ bottom:12px; right:12px; border-left:0; border-top:0; border-radius:0 0 6px 0; animation-delay:.9s; }
+#hfx-vs-{{ sid }} .hfx-vs__hud{
+  position:absolute; top:16px; right:44px; z-index:3;
+  display:inline-flex; align-items:center; gap:8px;
+  font-family:'JetBrains Mono',monospace; font-size:9.5px; font-weight:700;
+  letter-spacing:.2em; text-transform:uppercase; color:#C7CCDB;
+  background:rgba(7,8,13,.66); backdrop-filter:blur(5px);
+  border:1px solid rgba(0,224,255,.35); border-radius:999px; padding:7px 13px;
+}
+#hfx-vs-{{ sid }} .hfx-vs__hud-dot{
+  width:6px; height:6px; border-radius:50%; background:#00FFD1;
+  box-shadow:0 0 7px #00FFD1;
+  animation:hfxvsPulse-{{ sid }} 1.4s ease-in-out infinite;
+}
+#hfx-vs-{{ sid }} .hfx-vs__sound{
+  position:absolute; bottom:18px; right:14px; z-index:3;
+  width:36px; height:36px; border-radius:50%; border:1px solid rgba(255,255,255,.3);
+  background:rgba(7,8,13,.66); backdrop-filter:blur(5px); color:#fff; cursor:pointer;
+  display:inline-flex; align-items:center; justify-content:center;
+  transition:transform .18s cubic-bezier(.22,1,.36,1), border-color .18s;
+}
+#hfx-vs-{{ sid }} .hfx-vs__sound:hover{ transform:scale(1.1); border-color:#00E0FF; }
+#hfx-vs-{{ sid }} .hfx-vs__ico-sound{ display:none; }
+#hfx-vs-{{ sid }} .hfx-vs__sound.is-on .hfx-vs__ico-muted{ display:none; }
+#hfx-vs-{{ sid }} .hfx-vs__sound.is-on .hfx-vs__ico-sound{ display:block; }
+#hfx-vs-{{ sid }} .hfx-vs__progress{
+  position:absolute; left:0; right:0; bottom:0; height:14px; z-index:3; cursor:pointer;
+  display:flex; align-items:flex-end;
+}
+#hfx-vs-{{ sid }} .hfx-vs__progress-fill{
+  display:block; height:3px; width:0%;
+  background:linear-gradient(90deg,#00E0FF,#7F5BFF 40%,#FF2DFF 75%,#FF8A00);
+  box-shadow:0 0 8px rgba(0,224,255,.6);
+  transition:height .15s;
+}
+#hfx-vs-{{ sid }} .hfx-vs__progress:hover .hfx-vs__progress-fill{ height:5px; }
+
+/* ---------- copy ---------- */
+#hfx-vs-{{ sid }} .hfx-vs__copy{ position:relative; z-index:1; }
+#hfx-vs-{{ sid }} .hfx-vs__eyebrow{
+  color:{{ c_accent }}; font-size:12px; font-weight:600;
+  letter-spacing:.34em; text-transform:uppercase; margin-bottom:18px;
+}
+#hfx-vs-{{ sid }} .hfx-vs__heading{
+  color:{{ c_ink }}; font-weight:800; text-transform:uppercase;
+  font-size:clamp(1.9rem,3.8vw,3rem); line-height:1.05; margin-bottom:16px;
+}
+#hfx-vs-{{ sid }} .hfx-vs__heading-grad{
+  display:block;
+  background:linear-gradient(90deg,#00E0FF 0%,#7F5BFF 34%,#FF2DFF 64%,#FF8A00 100%);
+  -webkit-background-clip:text; background-clip:text; color:transparent;
+}
+#hfx-vs-{{ sid }} .hfx-vs__sub{ color:{{ c_muted }}; font-size:15.5px; line-height:1.6; max-width:46ch; margin-bottom:24px; }
+
+/* ---------- points ---------- */
+#hfx-vs-{{ sid }} .hfx-vs__points{ display:flex; flex-direction:column; gap:4px; margin-bottom:26px; overflow:hidden; }
+#hfx-vs-{{ sid }} .hfx-vs__points.is-measuring,
+#hfx-vs-{{ sid }} .hfx-vs__points.is-measuring *{ transition:none !important; }
+#hfx-vs-{{ sid }} .hfx-vs__point{
+  position:relative; display:flex; align-items:flex-start; gap:14px;
+  text-align:left; background:transparent; border:0; cursor:pointer;
+  padding:11px 10px 11px 0; border-radius:12px;
+  transition:background .2s;
+}
+#hfx-vs-{{ sid }} .hfx-vs__point:hover{ background:{{ c_hoverbg }}; }
+#hfx-vs-{{ sid }} .hfx-vs__point-bar{
+  flex:0 0 3px; align-self:stretch; border-radius:2px;
+  background:{{ c_line }};
+  transition:background .3s;
+}
+#hfx-vs-{{ sid }} .hfx-vs__point.is-active .hfx-vs__point-bar{
+  background:linear-gradient(180deg,#00E0FF,#7F5BFF 55%,#FF2DFF);
+  box-shadow:0 0 10px rgba(0,224,255,.4);
+}
+#hfx-vs-{{ sid }} .hfx-vs__point-body{ display:flex; flex-direction:column; flex:1; }
+#hfx-vs-{{ sid }} .hfx-vs__point-title{
+  color:{{ c_soft }}; font-family:'Exo 2',sans-serif; font-size:14.5px; font-weight:700;
+  letter-spacing:.05em; text-transform:uppercase;
+  transition:color .3s;
+}
+#hfx-vs-{{ sid }} .hfx-vs__point.is-active .hfx-vs__point-title{ color:{{ c_ink }}; }
+#hfx-vs-{{ sid }} .hfx-vs__point-text{
+  color:{{ c_muted }}; font-size:13px; line-height:1.5;
+  max-height:0; overflow:hidden; opacity:0;
+  transition:max-height .4s cubic-bezier(.22,1,.36,1), opacity .35s, margin-top .35s;
+}
+#hfx-vs-{{ sid }} .hfx-vs__point.is-active .hfx-vs__point-text{
+  max-height:90px; opacity:1; margin-top:5px;
+}
+#hfx-vs-{{ sid }} .hfx-vs__point-time{
+  font-family:'JetBrains Mono',monospace; font-size:10px; color:{{ c_soft }};
+  letter-spacing:.1em; padding-top:3px;
+  transition:color .3s;
+}
+#hfx-vs-{{ sid }} .hfx-vs__point.is-active .hfx-vs__point-time{ color:{{ c_accent }}; }
+
+/* ---------- button + stats ---------- */
+#hfx-vs-{{ sid }} .hfx-vs__btn{
+  display:inline-flex; align-items:center; gap:9px; margin-bottom:28px;
+  font-size:13px; font-weight:700; letter-spacing:.08em; text-transform:uppercase;
+  color:#fff; text-decoration:none; border-radius:999px; padding:14px 28px;
+  background:{% if section.settings.theme == 'light' %}#0E1320{% else %}linear-gradient(90deg,#00E0FF,#7F5BFF 55%,#FF2DFF){% endif %};
+  box-shadow:{% if section.settings.theme == 'light' %}0 4px 16px rgba(14,19,32,.18){% else %}0 4px 24px rgba(127,91,255,.4){% endif %};
+  transition:transform .18s cubic-bezier(.22,1,.36,1), filter .18s, box-shadow .18s;
+}
+#hfx-vs-{{ sid }} .hfx-vs__btn:hover{ transform:translateY(-2px); filter:brightness(1.08); box-shadow:0 8px 32px rgba(127,91,255,.5); }
+#hfx-vs-{{ sid }} .hfx-vs__stats{ display:flex; align-items:stretch; }
+#hfx-vs-{{ sid }} .hfx-vs__stat{
+  display:flex; flex-direction:column; gap:3px; padding:0 24px;
+  border-left:1px solid {{ c_line }};
+}
+#hfx-vs-{{ sid }} .hfx-vs__stat:first-child{ border-left:0; padding-left:0; }
+#hfx-vs-{{ sid }} .hfx-vs__stat strong{
+  color:{{ c_ink }}; font-size:20px; font-weight:800; letter-spacing:.03em;
+}
+#hfx-vs-{{ sid }} .hfx-vs__stat span{
+  font-family:'JetBrains Mono',monospace; font-size:10px; color:{{ c_soft }};
+  letter-spacing:.16em; text-transform:uppercase;
+}
+
+/* ---------- entrance ---------- */
+#hfx-vs-{{ sid }} .hfx-vs__reveal{
+  opacity:0; transform:translateY(24px);
+  transition:opacity .7s cubic-bezier(.22,1,.36,1), transform .7s cubic-bezier(.22,1,.36,1);
+}
+#hfx-vs-{{ sid }} .hfx-vs__copy .hfx-vs__reveal:nth-child(2){ transition-delay:.08s; }
+#hfx-vs-{{ sid }} .hfx-vs__copy .hfx-vs__reveal:nth-child(3){ transition-delay:.16s; }
+#hfx-vs-{{ sid }} .hfx-vs__copy .hfx-vs__reveal:nth-child(4){ transition-delay:.24s; }
+#hfx-vs-{{ sid }} .hfx-vs__copy .hfx-vs__reveal:nth-child(5){ transition-delay:.32s; }
+#hfx-vs-{{ sid }} .hfx-vs__copy .hfx-vs__reveal:nth-child(6){ transition-delay:.4s; }
+#hfx-vs-{{ sid }}.is-inview .hfx-vs__reveal{ opacity:1; transform:none; }
+
+/* ---------- responsive ---------- */
+@media (max-width: 989px){
+  #hfx-vs-{{ sid }} .hfx-vs__card{ grid-template-columns:1fr; }
+  #hfx-vs-{{ sid }} .hfx-vs__card--flip .hfx-vs__media{ order:0; }
+}
+@media (max-width: 599px){
+  #hfx-vs-{{ sid }} .hfx-vs__stat{ padding:0 14px; }
+  #hfx-vs-{{ sid }} .hfx-vs__stat strong{ font-size:17px; }
+}
+
+/* ---------- reduced motion ---------- */
+@media (prefers-reduced-motion: reduce){
+  #hfx-vs-{{ sid }} *{ animation:none !important; transition:none !important; }
+  #hfx-vs-{{ sid }} .hfx-vs__reveal{ opacity:1; transform:none; }
+  #hfx-vs-{{ sid }} .hfx-vs__frame::before{ background:linear-gradient(90deg,#00E0FF,#7F5BFF,#FF2DFF,#FF8A00); }
+}
+{% endstyle %}
+
+<script>
+(function(){
+  var root = document.getElementById('hfx-vs-{{ sid }}');
+  if(!root) return;
+  var video = root.querySelector('.hfx-vs__screen video');
+  var ytFrame = root.querySelector('[data-hfx-yt]');
+  var tilt = root.querySelector('[data-hfx-tilt]');
+  var frame = root.querySelector('.hfx-vs__frame');
+  var points = Array.prototype.slice.call(root.querySelectorAll('[data-hfx-point]'));
+  var soundBtn = root.querySelector('[data-hfx-sound]');
+  var progress = root.querySelector('[data-hfx-progress]');
+  var fill = root.querySelector('[data-hfx-progressfill]');
+  var reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  var isTouch = window.matchMedia('(hover: none)').matches;
+
+  /* ----- 3D tilt ----- */
+  if(!reduced && !isTouch && tilt && frame){
+    tilt.addEventListener('mousemove', function(e){
+      var r = tilt.getBoundingClientRect();
+      var x = (e.clientX - r.left) / r.width - .5;
+      var y = (e.clientY - r.top) / r.height - .5;
+      frame.style.transform = 'rotateY(' + (x * 7) + 'deg) rotateX(' + (y * -7) + 'deg)';
+    });
+    tilt.addEventListener('mouseleave', function(){ frame.style.transform = ''; });
+  }
+
+  /* ----- sound toggle ----- */
+  if(soundBtn && video){
+    soundBtn.addEventListener('click', function(){
+      video.muted = !video.muted;
+      soundBtn.classList.toggle('is-on', !video.muted);
+      if(video.paused) video.play().catch(function(){});
+    });
+  }
+
+  /* ----- lock list height so expanding text never resizes the card ----- */
+  var pointsWrap = root.querySelector('[data-hfx-points]');
+  function lockPointsHeight(){
+    if(!pointsWrap || !points.length) return;
+    var prev = root.querySelector('[data-hfx-point].is-active');
+    pointsWrap.classList.add('is-measuring');
+    pointsWrap.style.height = '';
+    var max = 0;
+    points.forEach(function(p){
+      points.forEach(function(x){ x.classList.toggle('is-active', x === p); });
+      max = Math.max(max, pointsWrap.offsetHeight);
+    });
+    points.forEach(function(x){ x.classList.toggle('is-active', x === prev); });
+    pointsWrap.style.height = max + 'px';
+    void pointsWrap.offsetHeight;
+    pointsWrap.classList.remove('is-measuring');
+  }
+  window.addEventListener('load', lockPointsHeight);
+  lockPointsHeight();
+  var rsz;
+  window.addEventListener('resize', function(){
+    clearTimeout(rsz); rsz = setTimeout(lockPointsHeight, 200);
+  });
+
+  /* ----- chapters ----- */
+  var timed = points.filter(function(p){
+    var t = parseFloat(p.getAttribute('data-time'));
+    return !isNaN(t) && t >= 0;
+  });
+  function setActive(el){
+    points.forEach(function(p){ p.classList.toggle('is-active', p === el); });
+  }
+  points.forEach(function(p){
+    p.addEventListener('click', function(){
+      setActive(p);
+      userPicked = true;
+      var t = parseFloat(p.getAttribute('data-time'));
+      if(video && !isNaN(t) && t >= 0){
+        video.currentTime = t;
+        video.play().catch(function(){});
+        userPicked = false; /* let timeupdate take over again */
+      }
+    });
+  });
+  var userPicked = false;
+  if(video && timed.length){
+    video.addEventListener('timeupdate', function(){
+      if(userPicked) return;
+      var t = video.currentTime, active = null;
+      timed.forEach(function(p){
+        if(t >= parseFloat(p.getAttribute('data-time'))) active = p;
+      });
+      if(active) setActive(active);
+      if(fill && video.duration) fill.style.width = (t / video.duration * 100) + '%';
+    });
+  } else if(video && fill){
+    video.addEventListener('timeupdate', function(){
+      if(video.duration) fill.style.width = (video.currentTime / video.duration * 100) + '%';
+    });
+  }
+  /* auto-cycle when no timestamps (and no YouTube player driving them) */
+  if((!video || !timed.length) && !(ytFrame && timed.length) && points.length > 1 && !reduced){
+    var ci = 0;
+    setInterval(function(){
+      if(userPicked) return;
+      ci = (ci + 1) % points.length;
+      setActive(points[ci]);
+    }, 3500);
+  }
+
+  /* ----- seek on progress bar ----- */
+  if(progress && video){
+    progress.addEventListener('click', function(e){
+      var r = progress.getBoundingClientRect();
+      if(video.duration) video.currentTime = ((e.clientX - r.left) / r.width) * video.duration;
+    });
+  }
+
+  /* ----- YouTube embed: same controls via the IFrame API ----- */
+  if(ytFrame && !video){
+    var ytPlayer = null, ytReady = false;
+    function initYT(){
+      ytPlayer = new YT.Player(ytFrame, {
+        events: { onReady: function(){ ytReady = true; } }
+      });
+    }
+    if(window.YT && window.YT.Player){ initYT(); }
+    else {
+      var prevCb = window.onYouTubeIframeAPIReady;
+      window.onYouTubeIframeAPIReady = function(){
+        if(prevCb) prevCb();
+        initYT();
+      };
+      if(!document.querySelector('script[src*="youtube.com/iframe_api"]')){
+        var ytTag = document.createElement('script');
+        ytTag.src = 'https://www.youtube.com/iframe_api';
+        document.head.appendChild(ytTag);
+      }
+    }
+    if(soundBtn){
+      soundBtn.addEventListener('click', function(){
+        if(!ytReady) return;
+        if(ytPlayer.isMuted()){ ytPlayer.unMute(); soundBtn.classList.add('is-on'); }
+        else { ytPlayer.mute(); soundBtn.classList.remove('is-on'); }
+      });
+    }
+    points.forEach(function(p){
+      p.addEventListener('click', function(){
+        var t = parseFloat(p.getAttribute('data-time'));
+        if(ytReady && !isNaN(t) && t >= 0){
+          ytPlayer.seekTo(t, true);
+          ytPlayer.playVideo();
+          userPicked = false; /* let the poll take over again */
+        }
+      });
+    });
+    if(progress){
+      progress.addEventListener('click', function(e){
+        if(!ytReady) return;
+        var r = progress.getBoundingClientRect();
+        var d = ytPlayer.getDuration();
+        if(d) ytPlayer.seekTo(((e.clientX - r.left) / r.width) * d, true);
+      });
+    }
+    setInterval(function(){
+      if(!ytReady || typeof ytPlayer.getCurrentTime !== 'function') return;
+      var t = ytPlayer.getCurrentTime(), d = ytPlayer.getDuration();
+      if(fill && d) fill.style.width = (t / d * 100) + '%';
+      if(timed.length && !userPicked){
+        var active = null;
+        timed.forEach(function(p){
+          if(t >= parseFloat(p.getAttribute('data-time'))) active = p;
+        });
+        if(active) setActive(active);
+      }
+    }, 400);
+    if('IntersectionObserver' in window){
+      new IntersectionObserver(function(entries){
+        entries.forEach(function(e){
+          if(!ytReady) return;
+          if(e.isIntersecting) ytPlayer.playVideo();
+          else ytPlayer.pauseVideo();
+        });
+      }, { threshold: .18 }).observe(root);
+    }
+  }
+
+  /* ----- count-up stats ----- */
+  function countUp(el){
+    var raw = el.getAttribute('data-hfx-count') || '';
+    var m = raw.match(/^([^0-9]*)([0-9][0-9,.]*)(.*)$/);
+    if(!m){ el.textContent = raw; return; }
+    var target = parseFloat(m[2].replace(/,/g, ''));
+    var pre = m[1], suf = m[3];
+    var dur = 1300, start = null;
+    function frame(ts){
+      if(!start) start = ts;
+      var p = Math.min((ts - start) / dur, 1);
+      var eased = 1 - Math.pow(1 - p, 3);
+      var val = Math.round(target * eased);
+      el.textContent = pre + val.toLocaleString() + suf;
+      if(p < 1) requestAnimationFrame(frame);
+    }
+    if(reduced){ el.textContent = raw; }
+    else requestAnimationFrame(frame);
+  }
+
+  /* ----- reveal + offscreen pause ----- */
+  var counted = false;
+  if('IntersectionObserver' in window){
+    var io = new IntersectionObserver(function(entries){
+      entries.forEach(function(e){
+        if(e.isIntersecting){
+          root.classList.add('is-inview');
+          if(video) video.play().catch(function(){});
+          if(!counted){
+            counted = true;
+            root.querySelectorAll('[data-hfx-count]').forEach(countUp);
+          }
+        } else if(video){ video.pause(); }
+      });
+    }, { threshold: .18 });
+    io.observe(root);
+  } else {
+    root.classList.add('is-inview');
+    root.querySelectorAll('[data-hfx-count]').forEach(countUp);
+  }
+})();
+</script>
+
+{% schema %}
+{
+  "name": "Video Showcase (Premium)",
+  "tag": "section",
+  "class": "hfx-vs-section",
+  "settings": [
+    {
+      "type": "select", "id": "theme", "label": "Theme",
+      "options": [
+        { "value": "dark", "label": "Dark (premium hero moment)" },
+        { "value": "light", "label": "Light (storefront)" }
+      ],
+      "default": "dark"
+    },
+    { "type": "header", "content": "Video" },
+    { "type": "video_url", "id": "external_video", "label": "YouTube or Vimeo URL", "accept": ["youtube", "vimeo"], "info": "Takes priority when set. YouTube keeps the chapters, sound and progress controls; Vimeo plays as a clean background loop." },
+    { "type": "video", "id": "video", "label": "Video (Shopify-hosted)" },
+    { "type": "text", "id": "video_url", "label": "…or direct video URL (.mp4)", "info": "Used only if no Shopify video is picked. Autoplays muted and loops." },
+    { "type": "image_picker", "id": "poster", "label": "Poster image" },
+    { "type": "text", "id": "hud_text", "label": "HUD pill text", "default": "HOLOGRAPHIC DISPLAY · LIVE" },
+    { "type": "checkbox", "id": "flip", "label": "Video on the right instead", "default": false },
+    { "type": "header", "content": "Copy" },
+    { "type": "text", "id": "eyebrow", "label": "Eyebrow", "default": "WHY HOLOFEX" },
+    { "type": "text", "id": "heading", "label": "Heading", "default": "SEE THE MAGIC" },
+    { "type": "text", "id": "heading_grad", "label": "Heading gradient words", "default": "IN MOTION." },
+    { "type": "textarea", "id": "subtext", "label": "Subtext", "default": "Flat screens get scrolled past. Floating 3D visuals stop people mid-step — watch what happens when your content leaves the screen." },
+    { "type": "header", "content": "Button" },
+    { "type": "text", "id": "btn_label", "label": "Button label", "default": "Shop Hologram Fans" },
+    { "type": "url", "id": "btn_link", "label": "Button link" },
+    { "type": "header", "content": "Stats (count up on scroll)" },
+    { "type": "text", "id": "stat1_value", "label": "Stat 1 value", "default": "95%", "info": "Numbers animate; prefixes/suffixes like % or M+ are kept." },
+    { "type": "text", "id": "stat1_label", "label": "Stat 1 label", "default": "More likely to stop" },
+    { "type": "text", "id": "stat2_value", "label": "Stat 2 value", "default": "40%" },
+    { "type": "text", "id": "stat2_label", "label": "Stat 2 label", "default": "More foot traffic" },
+    { "type": "text", "id": "stat3_value", "label": "Stat 3 value", "default": "1100+" },
+    { "type": "text", "id": "stat3_label", "label": "Stat 3 label", "default": "Verified reviews" },
+    { "type": "header", "content": "Layout" },
+    { "type": "range", "id": "padding_top", "label": "Top padding", "min": 0, "max": 140, "step": 4, "default": 32 },
+    { "type": "range", "id": "padding_bottom", "label": "Bottom padding", "min": 0, "max": 140, "step": 4, "default": 48 }
+  ],
+  "blocks": [
+    {
+      "type": "point",
+      "name": "Key point",
+      "limit": 6,
+      "settings": [
+        { "type": "text", "id": "title", "label": "Title", "default": "Stops foot traffic" },
+        { "type": "textarea", "id": "text", "label": "Text (shown when active)", "default": "Motion and depth grab attention from across the room — people physically stop to look." },
+        { "type": "number", "id": "time", "label": "Video timestamp (seconds, optional)", "info": "If set, clicking this point jumps the video there, and it lights up automatically as the video plays. Leave empty to auto-cycle instead." }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "Video Showcase (Premium)",
+      "blocks": [
+        { "type": "point", "settings": { "title": "Stops foot traffic", "text": "Motion and depth grab attention from across the room — people physically stop to look." } },
+        { "type": "point", "settings": { "title": "True holographic depth", "text": "Content appears to float in mid-air with nothing around it — no screen, no frame." } },
+        { "type": "point", "settings": { "title": "Set up in minutes", "text": "Mount it, power it, upload your content. No technical skills needed." } },
+        { "type": "point", "settings": { "title": "Update content anytime", "text": "Swap campaigns in seconds from Holofex Studio — no reprinting, ever." } }
+      ]
+    }
+  ]
+}
+{% endschema %}
