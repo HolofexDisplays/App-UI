@@ -299,12 +299,26 @@
 
 {%- liquid
   assign pr_uid = section.id
-  assign pr_bgc = section.settings.background_color | default: '#000000'
-  assign pr_bgc_str = pr_bgc | append: ''
-  if pr_bgc_str == blank or pr_bgc_str == 'rgba(0,0,0,0)'
-    assign pr_bgc = '#000000'
+  assign pr_theme = section.settings.theme | default: 'light'
+  assign pr_bgc = section.settings.background_color | append: ''
+  if pr_bgc == blank or pr_bgc == 'rgba(0,0,0,0)'
+    comment
+      No override picked: the theme decides the background.
+    endcomment
+    if pr_theme == 'dark'
+      assign pr_bgc = '#000000'
+      assign pr_bright = 0
+    else
+      assign pr_bgc = '#F5F5F5'
+      assign pr_bright = 245
+    endif
+  else
+    comment
+      Custom background picked: adapt the text to its brightness
+      so the section can never become unreadable.
+    endcomment
+    assign pr_bright = pr_bgc | color_brightness | default: 245
   endif
-  assign pr_bright = pr_bgc | color_brightness | default: 0
   if pr_bright > 140
     assign pr_mode = 'hfx-pr-light'
   else
@@ -442,11 +456,21 @@
       "label": "Footnote (optional)"
     },
     {
+      "type": "select",
+      "id": "theme",
+      "label": "Theme",
+      "options": [
+        { "value": "light", "label": "Light" },
+        { "value": "dark", "label": "Dark" }
+      ],
+      "default": "light",
+      "info": "Light uses the site's grey-white background, dark uses black."
+    },
+    {
       "type": "color",
       "id": "background_color",
-      "label": "Background colour",
-      "default": "#000000",
-      "info": "Heading text flips automatically between dark and light to stay readable."
+      "label": "Background colour (optional override)",
+      "info": "Leave unset to use the theme default. If set, text adapts to the picked colour automatically."
     },
     {
       "type": "range",

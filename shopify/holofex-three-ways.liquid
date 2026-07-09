@@ -447,12 +447,19 @@
 </svg>
 
 {%- liquid
-  assign tw_bgc = section.settings.background_color | default: '#F5F5F5'
-  assign tw_bgc_str = tw_bgc | append: ''
-  if tw_bgc_str == blank or tw_bgc_str == 'rgba(0,0,0,0)'
-    assign tw_bgc = '#F5F5F5'
+  assign tw_theme = section.settings.theme | default: 'light'
+  assign tw_bgc = section.settings.background_color | append: ''
+  if tw_bgc == blank or tw_bgc == 'rgba(0,0,0,0)'
+    if tw_theme == 'dark'
+      assign tw_bgc = '#000000'
+      assign tw_bright = 0
+    else
+      assign tw_bgc = '#F5F5F5'
+      assign tw_bright = 245
+    endif
+  else
+    assign tw_bright = tw_bgc | color_brightness | default: 245
   endif
-  assign tw_bright = tw_bgc | color_brightness | default: 245
   if tw_bright > 140
     assign tw_mode = 'hfx-tw-light'
   else
@@ -608,11 +615,21 @@
       "default": "Choose the method that works best for your vision."
     },
     {
+      "type": "select",
+      "id": "theme",
+      "label": "Theme",
+      "options": [
+        { "value": "light", "label": "Light" },
+        { "value": "dark", "label": "Dark" }
+      ],
+      "default": "light",
+      "info": "Light uses the site's grey-white background, dark uses black."
+    },
+    {
       "type": "color",
       "id": "background_color",
-      "label": "Background colour",
-      "default": "#F5F5F5",
-      "info": "Heading text flips automatically between dark and light to stay readable."
+      "label": "Background colour (optional override)",
+      "info": "Leave unset to use the theme default. If set, text adapts to the picked colour automatically."
     },
     {
       "type": "text",
