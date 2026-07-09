@@ -300,24 +300,18 @@
 {%- liquid
   assign pr_uid = section.id
   assign pr_theme = section.settings.theme | default: 'light'
-  assign pr_bgc = section.settings.background_color | append: ''
-  if pr_bgc == blank or pr_bgc == 'rgba(0,0,0,0)'
-    comment
-      No override picked: the theme decides the background.
-    endcomment
-    if pr_theme == 'dark'
-      assign pr_bgc = '#000000'
-      assign pr_bright = 0
-    else
+  if pr_theme == 'dark'
+    assign pr_bgc = '#000000'
+    assign pr_bright = 0
+  elsif pr_theme == 'custom'
+    assign pr_bgc = section.settings.background_color | append: ''
+    if pr_bgc == blank or pr_bgc == 'rgba(0,0,0,0)'
       assign pr_bgc = '#F5F5F5'
-      assign pr_bright = 245
     endif
-  else
-    comment
-      Custom background picked: adapt the text to its brightness
-      so the section can never become unreadable.
-    endcomment
     assign pr_bright = pr_bgc | color_brightness | default: 245
+  else
+    assign pr_bgc = '#F5F5F5'
+    assign pr_bright = 245
   endif
   if pr_bright > 140
     assign pr_mode = 'hfx-pr-light'
@@ -461,16 +455,18 @@
       "label": "Theme",
       "options": [
         { "value": "light", "label": "Light" },
-        { "value": "dark", "label": "Dark" }
+        { "value": "dark", "label": "Dark" },
+        { "value": "custom", "label": "Custom colour" }
       ],
       "default": "light",
-      "info": "Light uses the site's grey-white background, dark uses black."
+      "info": "Light uses the site's grey-white background, dark uses black. Custom uses the colour picked below."
     },
     {
       "type": "color",
       "id": "background_color",
-      "label": "Background colour (optional override)",
-      "info": "Leave unset to use the theme default. If set, text adapts to the picked colour automatically."
+      "label": "Custom background colour",
+      "default": "#F5F5F5",
+      "info": "Only used when Theme is set to Custom colour. Text adapts to the picked colour automatically."
     },
     {
       "type": "range",
