@@ -95,23 +95,33 @@
   display: flex;
   flex-direction: column;
   border-radius: 16px;
-  border: 1px solid color-mix(in srgb, var(--acc) 28%, transparent);
+  border: 1px solid color-mix(in srgb, var(--acc) 45%, white);
   background:
-    radial-gradient(120% 60% at 50% 0%, color-mix(in srgb, var(--acc) 11%, transparent), transparent 60%),
-    linear-gradient(180deg, #0c0c16, #07070d);
+    radial-gradient(120% 60% at 50% 0%, color-mix(in srgb, var(--acc) 7%, transparent), transparent 55%),
+    linear-gradient(180deg, #ffffff, #f5f5fb);
   padding: 26px 24px 24px;
+  box-shadow:
+    0 0 26px color-mix(in srgb, var(--acc) 30%, transparent),
+    0 0 72px color-mix(in srgb, var(--acc2) 16%, transparent),
+    0 16px 40px rgba(0, 0, 0, 0.35);
   transition: transform 0.28s ease, box-shadow 0.28s ease, border-color 0.28s ease;
 }
 .hfx-pr-card:hover {
   transform: translateY(-5px);
-  border-color: color-mix(in srgb, var(--acc) 55%, transparent);
-  box-shadow: 0 18px 50px rgba(0, 0, 0, 0.6), 0 0 44px color-mix(in srgb, var(--acc) 20%, transparent);
+  border-color: color-mix(in srgb, var(--acc) 65%, white);
+  box-shadow:
+    0 0 36px color-mix(in srgb, var(--acc) 45%, transparent),
+    0 0 96px color-mix(in srgb, var(--acc2) 22%, transparent),
+    0 22px 54px rgba(0, 0, 0, 0.4);
 }
 
 /* highlighted (Popular) plan */
 .hfx-pr-card.hfx-pr-hot {
-  border-color: color-mix(in srgb, var(--acc) 65%, transparent);
-  box-shadow: 0 0 40px color-mix(in srgb, var(--acc) 22%, transparent), 0 18px 50px rgba(0, 0, 0, 0.55);
+  border-color: color-mix(in srgb, var(--acc) 70%, white);
+  box-shadow:
+    0 0 40px color-mix(in srgb, var(--acc) 42%, transparent),
+    0 0 100px color-mix(in srgb, var(--acc2) 20%, transparent),
+    0 16px 40px rgba(0, 0, 0, 0.35);
 }
 
 .hfx-pr-flag {
@@ -135,8 +145,8 @@
   font-weight: 700;
   letter-spacing: 0.18em;
   text-transform: uppercase;
-  color: var(--acc);
-  text-shadow: 0 0 14px color-mix(in srgb, var(--acc) 50%, transparent);
+  color: color-mix(in srgb, var(--acc) 85%, #10101c);
+  text-shadow: 0 0 14px color-mix(in srgb, var(--acc) 30%, transparent);
   margin-bottom: 8px;
 }
 
@@ -145,7 +155,7 @@
   font-weight: 600;
   letter-spacing: 0.16em;
   text-transform: uppercase;
-  color: #dcdcec;
+  color: #33334a;
   margin-bottom: 18px;
 }
 
@@ -154,8 +164,9 @@
   font-size: clamp(30px, 2.6vw, 40px);
   font-weight: 800;
   letter-spacing: -0.01em;
+  color: #10101c;
 }
-.hfx-pr-period { font-size: 13px; color: var(--text-dim); }
+.hfx-pr-period { font-size: 13px; color: #6b6b85; }
 
 /* ---------- feature list ---------- */
 .hfx-pr-feats { list-style: none; display: flex; flex-direction: column; gap: 11px; margin-bottom: 26px; }
@@ -166,7 +177,7 @@
   gap: 10px;
   font-size: 13px;
   line-height: 1.5;
-  color: #cfcfe2;
+  color: #3d3d55;
 }
 .hfx-pr-feat svg {
   flex: none;
@@ -214,8 +225,18 @@
 .hfx-pr-light .hfx-pr-title { color: #0d0d16; }
 .hfx-pr-light .hfx-pr-sub { color: #5c5c72; }
 .hfx-pr-light .hfx-pr-note { color: #6a6a82; }
-.hfx-pr-light .hfx-pr-card { box-shadow: 0 14px 44px rgba(12, 12, 26, 0.16); }
-.hfx-pr-light .hfx-pr-card:hover { box-shadow: 0 22px 60px rgba(12, 12, 26, 0.22), 0 0 44px color-mix(in srgb, var(--acc) 26%, transparent); }
+.hfx-pr-light .hfx-pr-card {
+  box-shadow:
+    0 0 26px color-mix(in srgb, var(--acc) 26%, transparent),
+    0 0 72px color-mix(in srgb, var(--acc2) 12%, transparent),
+    0 14px 40px rgba(12, 12, 26, 0.14);
+}
+.hfx-pr-light .hfx-pr-card:hover {
+  box-shadow:
+    0 0 36px color-mix(in srgb, var(--acc) 40%, transparent),
+    0 0 96px color-mix(in srgb, var(--acc2) 18%, transparent),
+    0 20px 52px rgba(12, 12, 26, 0.18);
+}
 
 /* ---------- swipe dots (mobile only) ---------- */
 .hfx-pr-swipe { display: none; }
